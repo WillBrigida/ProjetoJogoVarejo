@@ -1,0 +1,68 @@
+﻿
+
+@page "/grupos"
+
+
+<style>
+    h1, h2, h3, h4, h5, h6,
+.h1, .h2, .h3, .h4, .h5, .h6 {
+  margin-bottom: 0.5rem;
+  font-family: "Montserrat", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  font-weight: 700;
+  line-height: 1.2;
+</style>
+
+<div class="text-center">
+    <h1 class="display-4">Grupos</h1>
+    <br/>
+</div>
+
+
+
+@if (grupos == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+<div style="text-align:center; margin: 0px 60px;">
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Como</th>
+                <th>Quando</th>
+                <th>Grupo Operador</th>
+                <th></th>
+                <th></th>
+                <th></th>
+                
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in grupos)
+            {
+                <tr>
+                    <td>@item.GrupoId</td>
+                    <td>@item.Como</td>
+                    <td>@item.Quando</td>
+                    <td>@item.GrupoOperadorId</td>
+                    <td><button class="btn btn-outline-primary">Editar</button></td>
+                    <td><button class="btn btn-outline-primary">Excluir</button></td>
+                    <td><button class="btn btn-outline-primary">Histórico</button></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    </div>
+}
+
+@code {
+    private List<Grupo> grupos;
+
+    protected  override async Task OnInitializedAsync()
+    {
+        grupos = await Mock.ListaGrupo();
+    }
+}
