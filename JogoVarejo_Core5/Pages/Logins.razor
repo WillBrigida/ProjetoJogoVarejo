@@ -1,0 +1,53 @@
+@page "/login"
+
+<div class="text-center">
+    <h3 class="display-4">Login</h3>
+    <br/>
+    <br/>
+</div>
+
+         
+            
+        <div class="card" style="width: 50%; margin: 0 auto; background: #e4edf3;">
+            <div class="card-body">
+                <h3 class="text-center">Novo Grupo</h3>
+                <EditForm  Model="@Registro" OnValidSubmit="Registrar">
+
+                     <div class="form-group">
+                        <label for="grupo">Grupo:</label>
+                        <InputText Id="nome" class="form-control" @bind-Value="Registro.Grupo" />
+                        <ValidationMessage For="@(() => Registro.Grupo)" />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="grupo">Senha:</label>
+                        <InputText Id="nome" class="form-control" @bind-Value="Registro.Senha" />
+                        <ValidationMessage For="@(() => Registro.Senha)" />
+                    </div>
+
+
+                    <br/>
+
+                    <button type="submit" class="btn btn-primary">Login</button>
+                </EditForm>
+            </div>
+        </div>
+
+
+        <style>
+    h1, h2, h3, h4, h5, h6,
+.h1, .h2, .h3, .h4, .h5, .h6 {
+  margin-bottom: 0.5rem;
+  font-family: "Montserrat", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  font-weight: 700;
+  line-height: 1.2;
+</style>
+
+ @code
+        {
+            public Registro Registro = new Registro();
+            protected async Task Registrar()
+            {
+            }
+        }
+
