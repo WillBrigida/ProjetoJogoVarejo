@@ -1,0 +1,21 @@
+﻿@page "/"
+
+<AuthorizeView>
+    <Authorized>
+        <div class="text-center" id="home">
+            <h1 class="display-4">Jogo</h1>
+            <h1 class="display-4">Gestão da Cadeia de Suprimentos</h1>
+            <h1 class="display-4">- Experimento 1 -</h1>
+            <p></p>
+            <p></p>
+            <p>Fundação Getúlio Vargas</p>
+            <p>MBA em Gestão Industrial</p>
+            <p>Disciplina Tecnologias em Gestão de Materiais</p>
+        </div>
+    </Authorized>
+    <NotAuthorized>
+        <Login/>
+    </NotAuthorized>
+</AuthorizeView>
+
+

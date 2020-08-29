@@ -1,0 +1,54 @@
+﻿@page "/registro"
+@inject IAuthService AuthService
+@inject NavigationManager Nav
+
+<div class="text-center" id="registro">
+    <h3 class="display-4">Cadastro</h3>
+    <br />
+    <br />
+</div>
+
+
+
+<div class="card" id="card-registro">
+    <div class="card-body">
+        <h3 class="text-center">Novo Usuário / Grupo</h3>
+        <EditForm Model="@Usuario" OnValidSubmit="Registrar">
+
+            <div class="form-group">
+                <label for="grupo">Nome:</label>
+                <InputText Id="nome" class="form-control" @bind-Value="Usuario.Login" />
+                <ValidationMessage For="@(() => Usuario.Nome)" />
+            </div>
+
+            <div class="form-group">
+                <label for="grupo">Senha:</label>
+                <InputText Id="nome" class="form-control" @bind-Value="Usuario.Senha" />
+                <ValidationMessage For="@(() => Usuario.Senha)" />
+            </div>
+
+            @*<div class="form-group">
+                    <label for="grupo">Confirmar Senha:</label>
+                    <InputText Id="nome" class="form-control" @bind-Value="Usuario.ConfirmacaoSenha" />
+                    <ValidationMessage For="@(() => Usuario.ConfirmacaoSenha)" />
+                </div>*@
+
+
+            <button type="submit" class="btn btn-primary">Salvar</button>
+        </EditForm>
+    </div>
+</div>
+
+
+
+
+@code
+        {
+    public Usuario Usuario = new Usuario();
+    protected async Task Registrar()
+    {
+        await AuthService.Register(Usuario);
+        Nav.NavigateTo("/login");
+    }
+}
+
