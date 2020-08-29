@@ -56,3 +56,18 @@ a, .btn-link {
         right: 0.75rem;
         top: 0.5rem;
     }
+
+
+.titulos {
+    margin: 40px 0px 0px 0px;
+}
+
+.cor-site {
+    background-color: #4a8fa0;
+}
+
+/*//striped*/
+.table-striped > tbody > tr:nth-child(odd) > td,
+.table-striped > tbody > tr:nth-child(odd) > th {
+    background-color: #f5f9fa;
+}

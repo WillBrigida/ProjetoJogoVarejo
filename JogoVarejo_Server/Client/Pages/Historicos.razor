@@ -1,2 +1,60 @@
 ﻿@page "/historico"
 
+<div class="text-center">
+    <h1 class="display-4">Histórico</h1>
+    <br />
+</div>
+
+
+
+@if (historico == null)
+{
+<p><em>Loading...</em></p> }
+            else
+            {
+<div class="text-center" style="margin: 0px 60px;">
+
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Dia</th>
+                <th>Recebido</th>
+                <th>A Receber</th>
+                <th>Saldo Inicial</th>
+                <th>Qtd de Compra</th>
+                <th>Prazo de Entrega</th>
+                <th>Demanda</th>
+                <th>Vendido</th>
+                <th>Saldo Final</th>
+                <th>Estoque Médio</th>
+
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in historico)
+            {
+<tr>
+    <td>@item.Dia</td>
+    <td>@item.Recebido</td>
+    <td>@item.AReceber</td>
+    <td>@item.SaldoInicial</td>
+    <td>@item.Comprado</td>
+    <td>@item.Prazo</td>
+    <td>@item.Demanda</td>
+    <td>@item.Vendido</td>
+    <td>@item.SaldoFinal</td>
+    <td>@item.SaldoMedioDia</td>
+
+</tr>
+}
+        </tbody>
+    </table>
+</div>}
+
+@code { private List<Historico> historico;
+
+            protected override async Task OnInitializedAsync()
+            {
+                historico = await Mock.Historico(3);
+            } }

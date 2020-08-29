@@ -4,19 +4,19 @@
 
 
 <div class="text-center" id="login">
-    <h3 class="display-4">Login</h3>
+    <h1 class="display-4">Login</h1>
     <br />
     <br />
 </div>
 
 
-<div class="card" id="card-login">
+<div class="card cor-site" id="card-login">
     <div class="card-body">
         <h3 class="text-center">Login</h3>
         <EditForm Model="@Usuario" OnValidSubmit="Entrar">
 
             <div class="form-group">
-                <label for="grupo">Login:</label>
+                <label for="grupo">Login de acesso:</label>
                 <InputText Id="nome" class="form-control" @bind-Value="Usuario.Login" />
                 <ValidationMessage For="@(() => Usuario.Login)" />
             </div>
@@ -26,12 +26,11 @@
                 <InputText Id="nome" class="form-control" @bind-Value="Usuario.Senha" />
                 <ValidationMessage For="@(() => Usuario.Senha)" />
             </div>
-
+            <br/>
             <button type="submit" class="btn btn-primary">Login</button>
         </EditForm>
     </div>
 </div>
-
 
 
 
