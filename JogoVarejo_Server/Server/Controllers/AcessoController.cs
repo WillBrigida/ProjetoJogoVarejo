@@ -34,6 +34,7 @@ namespace JogoVarejo_Server.Server.Controller
         }
 
 
+
         [HttpGet("modelo")]
         public async Task<ActionResult> GetModelo()
         {
@@ -45,26 +46,24 @@ namespace JogoVarejo_Server.Server.Controller
             return base.Ok(new Usuario());
         }
 
+
         [HttpPost("register")]
         public async Task<ActionResult> Post([FromBody] Usuario usuario)
         {
-
             var user = new ApplicationUser
             {
                 Nome = usuario.Nome,
                 Login = usuario.Login,
                 UserName = usuario.Login,
                 Email = usuario.Login,
-                Senha = usuario.Senha
+                Senha = usuario.Senha,
             };
 
             var result = await _userManager.CreateAsync(user, usuario.Senha);
             if (result.Succeeded)
                 return Ok(result);
             else
-            {
                 return BadRequest();
-            }
         }
 
         [HttpPost("login")]
@@ -81,17 +80,12 @@ namespace JogoVarejo_Server.Server.Controller
 
             if (await _userManager.CheckPasswordAsync(user, usuario.Senha))
                 return Ok(new LoginResult { Token = await GenerateTokenAsync(user) });
-
-
             else
             {
                 //logando o usuario
                 //await _signInManager.SignInAsync(usuario, false);
-
                 return BadRequest("Erro");
             }
-
-
         }
 
         private async Task<string> GenerateTokenAsync(ApplicationUser user)

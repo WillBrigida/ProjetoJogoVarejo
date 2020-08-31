@@ -1,58 +1,66 @@
 ﻿@page "/grupo"
 
 
+<AuthorizeView>
+    <Authorized>
+        <div class="text-center">
+            <h1 class="display-4">Grupos</h1>
+            <br />
+        </div>
 
 
-<div class="text-center">
-    <h1 class="display-4">Grupos</h1>
-    <br />
-</div>
+        @if (grupos == null)
+        {
+            <p><em>Loading...</em></p>
+        }
+        else
+        {
+            <div style="text-align:center; margin: 0px 60px;">
+
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Id</th>
+                            <th>Como</th>
+                            <th>Quando</th>
+                            <th>Grupo Operador</th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in grupos)
+                        {
+                            <tr>
+                                <td>@item.GrupoId</td>
+                                <td>@item.Como</td>
+                                <td>@item.Quando</td>
+                                <td>@item.GrupoOperadorId</td>
+                                <td><button class="btn btn-outline-primary">Editar</button></td>
+                                <td><button class="btn btn-outline-primary">Excluir</button></td>
+                                <td><button class="btn btn-outline-primary" @onclick="@(()=> OnHistorico())">Histórico</button></td>
+
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+
+                <Modal @ref="modal"
+                       ECB_Aceitar="BtnAlertAceitar">
+                    <Historicos />
+                </Modal>
+            </div>
+        }
+    </Authorized>
+
+    <NotAuthorized>
+        <Login/>
+    </NotAuthorized>
+</AuthorizeView>
 
 
-@if (grupos == null)
-{
-    <p><em>Loading...</em></p>
-}
-else
-{
-<div style="text-align:center; margin: 0px 60px;">
-
-    <table class="table table-striped" >
-        <thead>
-            <tr>
-                <th>Id</th>
-                <th>Como</th>
-                <th>Quando</th>
-                <th>Grupo Operador</th>
-                <th></th>
-                <th></th>
-                <th></th>
-
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in grupos)
-            {
-            <tr>
-                <td>@item.GrupoId</td>
-                <td>@item.Como</td>
-                <td>@item.Quando</td>
-                <td>@item.GrupoOperadorId</td>
-                <td><button class="btn btn-outline-primary">Editar</button></td>
-                <td><button class="btn btn-outline-primary">Excluir</button></td>
-                <td><button class="btn btn-outline-primary"  @onclick="@(()=> OnHistorico())">Histórico</button></td>
-
-            </tr>
-            }
-        </tbody>
-    </table>
-
-    <Modal @ref="modal"
-                    ECB_Aceitar="BtnAlertAceitar">
-        <Historicos/>
-    </Modal>
-</div>
-}
 
 @code {
     private List<Grupo> grupos;

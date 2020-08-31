@@ -2,61 +2,74 @@
 @inject IAuthService AuthService
 @inject NavigationManager Nav
 
-<div class="text-center" id="registro">
-    <h3 class="display-4">Cadastro</h3>
-    <br />
-    <br />
-</div>
+<AuthorizeView>
+    <Authorized Context="Auth">
+        <div class="text-center" id="registro">
+            <h3 class="display-4">Cadastro</h3>
+            <br />
+            <br />
+        </div>
 
+        <h1>@Mensagem</h1>
+        <div class="card" id="card-registro">
+            <div class="card-body">
+                <h3 class="text-center">Novo Usuário / Grupo</h3>
+                <EditForm Model="@Usuario" OnValidSubmit="Registrar">
 
-<h1>@Mensagem</h1>
-<div class="card" id="card-registro">
-    <div class="card-body">
-        <h3 class="text-center">Novo Usuário / Grupo</h3>
-        <EditForm Model="@Usuario" OnValidSubmit="Registrar">
+                    <div class="form-group">
+                        <label form="categoria">Tipo de Usuário:</label>
+                        <select @onchange="@SelectTipo" class="form-control">
+                            @for (int i = 0; i < TipoUsuario.Length; i++)
+                            {
+                                <option value="@TipoUsuario[i]">
+                                    @TipoUsuario[i]
+                                </option>
+                            }
+                        </select>
+                    </div>
 
-            <div class="form-group">
-                <label for="grupo">Nome:</label>
-                <InputText Id="nome" class="form-control" @bind-Value="Usuario.Login" />
-                <ValidationMessage For="@(() => Usuario.Nome)" />
+                    <div class="form-group">
+                        <label for="grupo">Nome:</label>
+                        <InputText Id="nome" class="form-control" @bind-Value="Usuario.Nome" />
+                        <ValidationMessage For="@(() => Usuario.Nome)" />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="grupo">Login:</label>
+                        <InputText Id="nome" class="form-control" @bind-Value="Usuario.Login" />
+                        <ValidationMessage For="@(() => Usuario.Login)" />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="grupo">Senha:</label>
+                        <InputText Id="nome" class="form-control" @bind-Value="Usuario.Senha" />
+                        <ValidationMessage For="@(() => Usuario.Senha)" />
+                    </div>
+
+                    <div class="form-group">
+                        <label form="categoria">Grupo:</label>
+                        <select @onchange="@SelectGrupo" class="form-control" disabled="@IsDisabled">
+                            @for (int i = 0; i < Grupos.Length; i++)
+                            {
+                                <option value="@Grupos[i]">
+                                    @Grupos[i]
+                                </option>
+                            }
+                        </select>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Salvar</button>
+                </EditForm>
             </div>
+        </div>
+    </Authorized>
 
-            <div class="form-group">
-                <label for="grupo">Senha:</label>
-                <InputText Id="nome" class="form-control" @bind-Value="Usuario.Senha" />
-                <ValidationMessage For="@(() => Usuario.Senha)" />
-            </div>
-
-            <div class="form-group">
-                <label form="categoria">Grupo:</label>
-                <select @onchange="@SelectGrupo" class="form-control" disabled="@IsDisabled">
-                    @for (int i = 0; i < Grupos.Length; i++)
-                    {
-                        <option value="@Grupos[i]">
-                            @Grupos[i]
-                        </option>
-                    }
+    <NotAuthorized Context="Auth">
+        <Login/>
+    </NotAuthorized>
+</AuthorizeView>
 
 
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label form="categoria">Tipo de Usuário:</label>
-                <select @onchange="@SelectTipo" class="form-control">
-                    @for (int i = 0; i < TipoUsuario.Length; i++)
-                    {
-                        <option value="@TipoUsuario[i]">
-                            @TipoUsuario[i]
-                        </option>
-                    }
-                </select>
-            </div>
-
-            <button type="submit" class="btn btn-primary">Salvar</button>
-        </EditForm>
-    </div>
-</div>
 
 
 
