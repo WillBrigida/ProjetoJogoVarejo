@@ -6,6 +6,7 @@ namespace JogoVarejo_Server.Shared.Models
     public class ApplicationUser : IdentityUser
     {
         public int GrupoUsuarioId { get; set; }
+        public int TipoUsuarioId { get; set; }
         public string Nome { get; set; }
         public string Login { get; set; }
         public string Senha { get; set; }

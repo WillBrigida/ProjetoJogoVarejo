@@ -52,6 +52,7 @@ namespace JogoVarejo_Server.Server.Controller
             var user = new ApplicationUser
             {
                 Nome = usuario.Nome,
+                Login = usuario.Login,
                 UserName = usuario.Login,
                 Email = usuario.Login,
                 Senha = usuario.Senha
@@ -82,15 +83,15 @@ namespace JogoVarejo_Server.Server.Controller
                 return Ok(new LoginResult { Token = await GenerateTokenAsync(user) });
 
 
-                else
-                {
-                    //logando o usuario
-                    //await _signInManager.SignInAsync(usuario, false);
+            else
+            {
+                //logando o usuario
+                //await _signInManager.SignInAsync(usuario, false);
 
-                    return BadRequest("Erro");
-                }
-            
-          
+                return BadRequest("Erro");
+            }
+
+
         }
 
         private async Task<string> GenerateTokenAsync(ApplicationUser user)
