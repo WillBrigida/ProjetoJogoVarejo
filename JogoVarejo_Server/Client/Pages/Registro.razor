@@ -7,17 +7,17 @@
         <div class="text-center" id="registro">
             <h3 class="display-4">Cadastro</h3>
             <br />
-            <br />
         </div>
 
-        <h1>@Mensagem</h1>
+        <h6 class="text-center" style="color:mediumseagreen;">@MensagemSucesso</h6>
+        <h6 class="text-center" style="color:tomato">@MensagemErro</h6>
         <div class="card" id="card-registro">
             <div class="card-body">
                 <h3 class="text-center">Novo Usuário / Grupo</h3>
                 <EditForm Model="@Usuario" OnValidSubmit="Registrar">
 
                     <div class="form-group">
-                        <label form="categoria">Tipo de Usuário:</label>
+                        <label form="categoria">Tipo de Usuário: *</label>
                         <select @onchange="@SelectTipo" class="form-control">
                             @for (int i = 0; i < TipoUsuario.Length; i++)
                             {
@@ -29,25 +29,25 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="grupo">Nome:</label>
+                        <label for="grupo">Nome: *</label>
                         <InputText Id="nome" class="form-control" @bind-Value="Usuario.Nome" />
                         <ValidationMessage For="@(() => Usuario.Nome)" />
                     </div>
 
                     <div class="form-group">
-                        <label for="grupo">Login:</label>
+                        <label for="grupo">Login: *</label>
                         <InputText Id="nome" class="form-control" @bind-Value="Usuario.Login" />
                         <ValidationMessage For="@(() => Usuario.Login)" />
                     </div>
 
                     <div class="form-group">
-                        <label for="grupo">Senha:</label>
+                        <label for="grupo">Senha: *</label>
                         <InputText Id="nome" class="form-control" @bind-Value="Usuario.Senha" />
                         <ValidationMessage For="@(() => Usuario.Senha)" />
                     </div>
 
                     <div class="form-group">
-                        <label form="categoria">Grupo:</label>
+                        <label form="categoria">Grupo: </label>
                         <select @onchange="@SelectGrupo" class="form-control" disabled="@IsDisabled">
                             @for (int i = 0; i < Grupos.Length; i++)
                             {
@@ -65,11 +65,7 @@
     </Authorized>
 
     <NotAuthorized Context="Auth">
-        <div class="text-center" id="registro">
-            <h3 class="display-4" style="color:tomato">Você não possui autorização para acessar essa página.</h3>
-            <br />
-            <br />
-        </div>
+        <Index />
     </NotAuthorized>
 </AuthorizeView>
 
@@ -81,36 +77,46 @@
     public Usuario Usuario = new Usuario();
     public string[] TipoUsuario { get; set; } = new string[] { "-Selecione-", "Professor", "Aluno" };
     public string[] Grupos { get; set; } = new string[] { "-Selecione-", "1", "2", "3", "4", "5", "6", "7", "8" };
-    public string Mensagem { get; set; }
+    public string MensagemErro { get; set; }
+    public string MensagemSucesso { get; set; }
     public bool IsDisabled { get; set; }
 
     protected async Task Registrar()
     {
-        Mensagem = "";
+        MensagemErro = "";
+        MensagemSucesso = "";
+
+        if (string.IsNullOrEmpty(Usuario.Nome) || string.IsNullOrEmpty(Usuario.Login) || string.IsNullOrEmpty(Usuario.Senha))
+        {
+            MensagemErro = "* Campo obrigatório!";
+            return;
+        }
+
         var result = await AuthService.Register(Usuario);
 
         if (result.Sucesso)
         {
-            Nav.NavigateTo("/");
+            MensagemSucesso = $"{Usuario.Nome} cadastrado com sucesso!";
             return;
         }
-        Mensagem = result.Erro;
+
+        MensagemErro = result.Erro;
     }
 
     protected void SelectGrupo(ChangeEventArgs e)
     {
         IsDisabled = false;
-        Mensagem = "";
+        MensagemErro = "";
 
         if (Usuario.TipoUsuarioId == 0)
         {
-            Mensagem = "Selecione primeiro o tipo de usuário";
+            MensagemErro = "Selecione primeiro o tipo de usuário";
             return;
         }
 
         if (e.Value.ToString().Contains("-Selecione-"))
         {
-            Mensagem = "Selecione um Tipo";
+            MensagemErro = "Selecione um Tipo";
             return;
         }
 
@@ -121,12 +127,12 @@
     protected void SelectTipo(ChangeEventArgs e)
     {
         IsDisabled = false;
-        Mensagem = "";
+        MensagemErro = "";
 
 
         if (e.Value.ToString().Contains("-Selecione-"))
         {
-            Mensagem = "Selecione um Tipo";
+            MensagemErro = "Selecione um Tipo";
             return;
         }
 

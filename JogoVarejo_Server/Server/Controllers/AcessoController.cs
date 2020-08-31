@@ -77,25 +77,28 @@ namespace JogoVarejo_Server.Server.Controller
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] Usuario usuario)
         {
-            //Removendo propriedades desnecessárias
-            //ModelState.Remove("Nome");
-            //ModelState.Remove("Sobrenome");
-            //ModelState.Remove("ConfirmarSenha");
-            //ModelState.Remove("Apartamento");
-
-
-
-            var user = await _userManager.Users
-                  .FirstOrDefaultAsync(x => x.UserName == usuario.Login);
-
-            if (await _userManager.CheckPasswordAsync(user, usuario.Senha))
-                return Ok(new LoginResult { Token = await GenerateTokenAsync(user) });
-            else
+            var result = new LoginResult();
+            try
             {
-                //logando o usuario
-                //await _signInManager.SignInAsync(usuario, false);
-                return BadRequest("Erro");
+                var user = await _userManager.Users
+                 .FirstOrDefaultAsync(x => x.UserName == usuario.Login);
+
+                if (user == null)
+                    return BadRequest(new LoginResult { Sucesso = false, Token = "", Mensagem = "Usuário não encontado!" });
+
+                if (await _userManager.CheckPasswordAsync(user, usuario.Senha))
+                {
+                    result.Token = await GenerateTokenAsync(user);
+                    result.Sucesso = true;
+                }
+
+                return Ok(result);
             }
+            catch (Exception ex)
+            {
+                return BadRequest(new LoginResult { Mensagem = ex.Message, Sucesso = false, Token = null });
+            }
+
         }
 
         private async Task<string> GenerateTokenAsync(ApplicationUser user)
