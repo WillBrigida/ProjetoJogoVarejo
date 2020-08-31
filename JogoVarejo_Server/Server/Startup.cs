@@ -31,7 +31,7 @@ namespace JogoVarejo_Server.Server
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc();
-
+            services.AddTransient<SetAdmin>();
             services.AddControllersWithViews();
             services.AddRazorPages();
 

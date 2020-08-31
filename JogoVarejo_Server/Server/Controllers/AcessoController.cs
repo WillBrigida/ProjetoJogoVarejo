@@ -113,6 +113,5 @@ namespace JogoVarejo_Server.Server.Controller
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
-
     }
 }
