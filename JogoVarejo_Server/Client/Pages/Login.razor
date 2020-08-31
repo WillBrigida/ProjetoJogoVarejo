@@ -25,14 +25,29 @@
 
             <div class="form-group">
                 <label for="grupo">Senha: *</label>
-                <InputText Id="nome" class="form-control" @bind-Value="Usuario.Senha" />
+                <InputText type="password" Id="nome" class="form-control" @bind-Value="Usuario.Senha" />
                 <ValidationMessage For="@(() => Usuario.Senha)" />
             </div>
             <br />
-            <button type="submit" class="btn btn-primary">Login</button>
+            <span aria-hidden="true">
+                <button type="submit" class="btn btn-primary">Login</button>
+
+            </span>
         </EditForm>
     </div>
 </div>
+
+@if (IsBusy == true)
+{
+    <div style="width:100%; text-align:center; margin:20px 0">
+        <div class="spinner-border" style="width: 2rem; height: 2rem; color:#4a8fa0;" role="status">
+            <span class="sr-only">Loading...</span>
+        </div>
+        <p>carregando. . .</p>
+    </div>
+}
+
+
 
 
 
@@ -41,6 +56,7 @@
 
     public string MensagemErro { get; set; }
     public string MensagemSucesso { get; set; }
+    public bool IsBusy { get; set; }
 
     public Usuario Usuario = new Usuario();
     protected async Task Entrar()
@@ -51,14 +67,20 @@
             return;
         }
 
+
+        IsBusy = true;
+
         var result = await AuthService.Login(Usuario);
         if (!result.Sucesso)
         {
             MensagemErro = result.Mensagem;
+            IsBusy = false;
+
             return;
         }
 
         Nav.NavigateTo("/");
+        IsBusy = false;
     }
 }
 

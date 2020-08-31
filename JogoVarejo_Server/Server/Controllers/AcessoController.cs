@@ -91,6 +91,13 @@ namespace JogoVarejo_Server.Server.Controller
                     result.Token = await GenerateTokenAsync(user);
                     result.Sucesso = true;
                 }
+                else
+                {
+                    result.Token = "";
+                    result.Sucesso = false;
+                    result.Mensagem = "Verifique se os dados informados estão corretos e tente novamente!";
+                    return BadRequest(result);
+                }
 
                 return Ok(result);
             }
