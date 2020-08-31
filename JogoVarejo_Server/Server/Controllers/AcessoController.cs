@@ -57,14 +57,22 @@ namespace JogoVarejo_Server.Server.Controller
                 UserName = usuario.Login,
                 Email = usuario.Login,
                 Senha = usuario.Senha,
+                GrupoUsuarioId = usuario.GrupoUsuarioId,
+                TipoUsuarioId = usuario.TipoUsuarioId
             };
 
             var result = await _userManager.CreateAsync(user, usuario.Senha);
-            if (result.Succeeded)
-                return Ok(result);
+            if (!result.Succeeded)
+                return Ok(new CadastroResult { Erro = "Erro", Sucesso = false });
+
+            if (user.TipoUsuarioId == 1)
+                await _userManager.AddToRoleAsync(user, "Professor");
             else
-                return BadRequest();
+                await _userManager.AddToRoleAsync(user, "Aluno");
+
+            return Ok(new CadastroResult { Sucesso = true });
         }
+
 
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] Usuario usuario)
@@ -74,6 +82,8 @@ namespace JogoVarejo_Server.Server.Controller
             //ModelState.Remove("Sobrenome");
             //ModelState.Remove("ConfirmarSenha");
             //ModelState.Remove("Apartamento");
+
+
 
             var user = await _userManager.Users
                   .FirstOrDefaultAsync(x => x.UserName == usuario.Login);
@@ -90,6 +100,12 @@ namespace JogoVarejo_Server.Server.Controller
 
         private async Task<string> GenerateTokenAsync(ApplicationUser user)
         {
+            if (user.Nome.Contains("Admin"))
+            {
+                await _userManager.AddToRoleAsync(user, "Admin");
+                await _userManager.AddToRoleAsync(user, "Professor");
+            }
+
             var roles = await _signInManager.UserManager.GetRolesAsync(user);
 
             var claims = new List<Claim>();

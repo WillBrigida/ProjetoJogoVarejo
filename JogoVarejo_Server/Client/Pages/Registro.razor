@@ -2,7 +2,7 @@
 @inject IAuthService AuthService
 @inject NavigationManager Nav
 
-<AuthorizeView>
+<AuthorizeView Roles="Admin, Professor">
     <Authorized Context="Auth">
         <div class="text-center" id="registro">
             <h3 class="display-4">Cadastro</h3>
@@ -65,11 +65,13 @@
     </Authorized>
 
     <NotAuthorized Context="Auth">
-        <Login/>
+        <div class="text-center" id="registro">
+            <h3 class="display-4" style="color:tomato">Você não possui autorização para acessar essa página.</h3>
+            <br />
+            <br />
+        </div>
     </NotAuthorized>
 </AuthorizeView>
-
-
 
 
 
@@ -84,8 +86,15 @@
 
     protected async Task Registrar()
     {
-        await AuthService.Register(Usuario);
-        Nav.NavigateTo("/login");
+        Mensagem = "";
+        var result = await AuthService.Register(Usuario);
+
+        if (result.Sucesso)
+        {
+            Nav.NavigateTo("/");
+            return;
+        }
+        Mensagem = result.Erro;
     }
 
     protected void SelectGrupo(ChangeEventArgs e)
@@ -129,8 +138,6 @@
         }
         else
             Usuario.TipoUsuarioId = 2;
-
-        StateHasChanged();
     }
 }
 

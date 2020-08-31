@@ -97,8 +97,10 @@ namespace JogoVarejo_Server.Server
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, SetAdmin seeder)
         {
+            seeder.SeedAdminUser();
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
