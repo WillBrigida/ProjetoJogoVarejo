@@ -6,23 +6,58 @@
     </button>
 </div>
 
+
+
+
 <div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
     <ul class="nav flex-column">
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="oi oi-home" aria-hidden="true"></span> Home
-            </NavLink>
-        </li>
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="grupo">
-                <span class="oi oi-plus" aria-hidden="true"></span> Grupo
-            </NavLink>
-        </li>
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="historico">
-                <span class="oi oi-list-rich" aria-hidden="true"></span> Histórico
-            </NavLink>
-        </li>
+
+        <AuthorizeView Roles="Admin, Professor, Aluno">
+            <li class="nav-item px-3">
+                <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+                    <span class="oi oi-home" aria-hidden="true"></span> Home
+                </NavLink>
+            </li>
+        </AuthorizeView>
+
+        <AuthorizeView Roles="Admin, Professor">
+            <li class="nav-item px-3">
+                <NavLink class="nav-link" href="grupo">
+                    <span class="oi oi-plus" aria-hidden="true"></span> Grupo
+                </NavLink>
+            </li>
+
+            <li class="nav-item px-3">
+                <NavLink class="nav-link" href="historico">
+                    <span class="oi oi-list-rich" aria-hidden="true"></span> Histórico
+                </NavLink>
+            </li>
+            <li class="nav-item px-3">
+                <NavLink class="nav-link" href="controle">
+                    <span class="oi oi-list-rich" aria-hidden="true"></span> Controle
+                </NavLink>
+            </li>
+            <li class="nav-item px-3">
+                <NavLink class="nav-link" href="#">
+                    <span class="oi oi-list-rich" aria-hidden="true"></span> Reset BD
+                </NavLink>
+            </li>
+        </AuthorizeView>
+
+
+        <AuthorizeView Roles="Aluno">
+            <li class="nav-item px-3">
+                <NavLink class="nav-link" href="#">
+                    <span class="oi oi-plus" aria-hidden="true"></span> Gerente
+                </NavLink>
+            </li>
+            <li class="nav-item px-3">
+                <NavLink class="nav-link" href="#">
+                    <span class="oi oi-plus" aria-hidden="true"></span> Operador
+                </NavLink>
+            </li>
+        </AuthorizeView>
+
     </ul>
 </div>
 
