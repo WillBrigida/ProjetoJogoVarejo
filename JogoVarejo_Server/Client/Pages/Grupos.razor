@@ -1,4 +1,5 @@
 ﻿@page "/grupo"
+@inject NavigationManager Nav
 
 
 <AuthorizeView>
@@ -25,8 +26,6 @@
                             <th>Quando</th>
                             <th>Grupo Operador</th>
                             <th></th>
-                            <th></th>
-                            <th></th>
 
                         </tr>
                     </thead>
@@ -38,25 +37,34 @@
                                 <td>@item.Como</td>
                                 <td>@item.Quando</td>
                                 <td>@item.GrupoOperadorId</td>
-                                <td><button class="btn btn-outline-primary">Editar</button></td>
-                                <td><button class="btn btn-outline-primary">Excluir</button></td>
-                                <td><button class="btn btn-outline-primary" @onclick="@(()=> OnHistorico())">Histórico</button></td>
+                                <td class="text-right">
+                                    <button class="btn btn-link" style="color:cornflowerblue;" @onclick="@(()=> OnDetalheGrupo(item.GrupoId))"><i class="far fa-edit"></i></button>
+                                    <button class="btn btn btn-link" style="color:darkorange;" @onclick="@(()=> OnHistorico())"><i class="fas fa-history"></i></button>
+                                    @*<button class="btn btn btn-link" style="color:tomato;"><i class="far fa-trash-alt"></i></button>*@
+
+                                </td>
 
                             </tr>
                         }
                     </tbody>
                 </table>
 
-                <Modal @ref="modal"
+                <Modal @ref="modalHistorico"
                        ECB_Aceitar="BtnAlertAceitar">
                     <Historicos />
                 </Modal>
+
+                <Modal @ref="modalGerente"
+                       ECB_Aceitar="BtnAlertAceitar">
+                    <Gerente Grupo="@grupo" />
+                </Modal>
+
             </div>
         }
     </Authorized>
 
     <NotAuthorized>
-        <Login/>
+        <Login />
     </NotAuthorized>
 </AuthorizeView>
 
@@ -64,7 +72,9 @@
 
 @code {
     private List<Grupo> grupos;
-    protected Modal modal;
+    private Grupo grupo;
+    protected Modal modalHistorico;
+    protected Modal modalGerente;
 
 
     protected override async Task OnInitializedAsync()
@@ -74,12 +84,19 @@
 
     protected async Task OnHistorico()
     {
-        await Task.Run(() => modal.Exibir());
+        await Task.Run(() => modalHistorico.Exibir());
     }
 
     protected async Task BtnAlertAceitar()
     {
-        await Task.Run(() => modal.Ocultar());
+        await Task.Run(() => modalHistorico.Ocultar());
+        await Task.Run(() => modalGerente.Ocultar());
+    }
+
+    protected async Task OnDetalheGrupo(int id)
+    {
+        grupo = await Mock.ListaGrupo(id);
+        await Task.Run(() => modalGerente.Exibir());
     }
 }
 

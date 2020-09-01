@@ -1,1 +1,93 @@
 ﻿@page "/gerente"
+
+
+<AuthorizeView Roles="Admin, Aluno">
+    <Authorized Context="Auth">
+        <div class="text-center" id="gerente">
+            <i class="fas fa-user-tie" style="font-size:30px" ;></i>
+            <h1 class="display-4">Gerente</h1>
+            <br />
+        </div>
+
+        <h6 class="text-center" style="color:mediumseagreen">@MensagemSucesso</h6>
+        <h6 class="text-center" style="color:tomato">@MensagemErro</h6>
+
+        <div class="card" id="card-gerente">
+            <div class="card-body">
+
+                <EditForm Model="@Grupo" OnValidSubmit="Salvar">
+
+
+
+                    <div class="form-row">
+                        <div class="form-group col-6">
+                            <label for="grupo">Id:</label>
+                            <InputNumber Id="nome" class="form-control" @bind-Value="@Grupo.GrupoId" disabled />
+                        </div>
+                        <div class="form-group col-6">
+                            <label for="grupo">Grupo Operador:</label>
+                            <InputNumber Id="nome" class="form-control" @bind-Value="@Grupo.GrupoOperadorId" disabled />
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group col">
+                            <label for="grupo">Como: *</label>
+                            <InputTextArea Id="nome" class="form-control" @bind-Value="@Grupo.Como" />
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group col">
+                            <label for="grupo">Quando: *</label>
+                            <InputTextArea Id="nome" class="form-control" @bind-Value="@Grupo.Quando" />
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Salvar</button>
+
+                </EditForm>
+
+            </div>
+        </div>
+
+        @if (IsBusy == true)
+        {
+            <div style="width:100%; text-align:center; margin:20px 0">
+                <div class="spinner-border" style="width: 2rem; height: 2rem; color:#4a8fa0;" role="status">
+                    <span class="sr-only">Loading...</span>
+                </div>
+                <p>carregando. . .</p>
+            </div>
+        }
+    </Authorized>
+
+    <NotAuthorized Context="Auth">
+        <Index />
+    </NotAuthorized>
+</AuthorizeView>
+
+
+
+
+@code
+        {
+    [Parameter] public Grupo Grupo { get; set; } = new Grupo();
+    public Grupo Grupo1 { get; set; }
+
+    public string MensagemErro { get; set; }
+    public string MensagemSucesso { get; set; }
+    public bool IsDisabled { get; set; }
+    public bool IsBusy { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        Grupo1 = Grupo;
+    }
+
+    protected void Salvar()
+    {
+
+    }
+}
+

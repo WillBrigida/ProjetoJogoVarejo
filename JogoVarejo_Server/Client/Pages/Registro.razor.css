@@ -1,12 +1,18 @@
 ﻿
 #registro{
-    margin: 40px 0px 0px 0px;
+    margin: 0px 0px 0px 0px;
 }
 
 
 #card-registro{
-    width: 50%;
+    width:50px;
     margin: 20px auto 60px;
-    background: #e4edf3;
     padding: 0px 40px;
 }
+
+h3, label {
+    color: #d7d7d7;
+}
+
+
+

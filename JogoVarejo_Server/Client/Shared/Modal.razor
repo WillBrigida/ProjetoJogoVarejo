@@ -1,4 +1,7 @@
-﻿@if (mostrarModal)
+﻿@*@typeparam T*@
+
+
+@if (mostrarModal)
 {
 <div class="modal-backdrop show"></div>
 
@@ -25,15 +28,14 @@
 @code
 { bool mostrarModal = false;
 
-            [Parameter] public string P_TextoTitulo { get; set; } = "Alerta!";
-            [Parameter] public RenderFragment ChildContent { get; set; }
-            [Parameter] public EventCallback ECB_Aceitar { get; set; }
-            [Parameter] public string P_TextoBotaoAceitar { get; set; } = "Ok";
-            [Parameter] public string P_TextoBotaoCancelar { get; set; } = "Cancelar";
+    [Parameter] public string P_TextoTitulo { get; set; } = "Alerta!";
+    [Parameter] public RenderFragment ChildContent { get; set; }
+    [Parameter] public EventCallback ECB_Aceitar { get; set; }
+    [Parameter] public string P_TextoBotaoAceitar { get; set; } = "Ok";
+    [Parameter] public string P_TextoBotaoCancelar { get; set; } = "Cancelar";
+    public void Exibir()
+    {
+        mostrarModal = true;
+    }
 
-            public void Exibir()
-            {
-                mostrarModal = true;
-            }
-
-            public void Ocultar() => mostrarModal = false; }
+    public void Ocultar() => mostrarModal = false; }

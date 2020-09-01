@@ -7,7 +7,7 @@
             <br />
         </div>
 
-        @if (historico == null)
+        @if (Historico == null)
         {
             <p><em>Loading...</em></p> }
         else
@@ -32,7 +32,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach (var item in historico)
+                        @foreach (var item in Historico)
                         {
                             <tr>
                                 <td>@item.Dia</td>
@@ -62,9 +62,11 @@
 
 
 
-@code { private List<Historico> historico;
+@code { 
+        [Parameter] public List<Historico> Historico { get; set; }
 
-            protected override async Task OnInitializedAsync()
-            {
-                historico = await Mock.Historico(3);
-            } }
+    protected override async Task OnInitializedAsync()
+    {
+        Historico = await Mock.Historico(3);
+    }
+}
