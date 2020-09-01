@@ -1,12 +1,10 @@
-﻿<AuthorizeView>
-    <Authorized>
+﻿<AuthorizeView Roles="Admin, Professor">
         @context.User.Identity.Name
         <a href="/registro">|&nbsp;&nbsp;&nbsp;&nbsp;Novo Usuario</a>
         <a href="/logout">|&nbsp;&nbsp;&nbsp;&nbsp;Sair</a>
-    </Authorized>
+</AuthorizeView>
 
-    @*<NotAuthorized>
-        <a href="/registro">Registrar</a>
-        <a href="/login">|&nbsp;&nbsp;&nbsp;&nbsp;Login</a>
-    </NotAuthorized>*@
+<AuthorizeView Roles="Aluno">
+        @context.User.Identity.Name
+        <a href="/logout">|&nbsp;&nbsp;&nbsp;&nbsp;Sair</a>
 </AuthorizeView>
