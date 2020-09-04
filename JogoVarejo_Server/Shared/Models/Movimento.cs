@@ -1,7 +1,9 @@
-namespace JogoVarejo_Server.Shared.Models
+﻿namespace JogoVarejo_Server.Shared.Models
 {
-    public class Historico
+    public class Movimento
     {
+        public int MovimentoId { get; set; }
+        public int GrupoId { get; set; }
         public int Dia { get; set; }
         public int Recebido { get; set; }
         public int AReceber { get; set; }
@@ -12,5 +14,6 @@ namespace JogoVarejo_Server.Shared.Models
         public int Vendido { get; set; }
         public int SaldoFinal { get; set; }
         public decimal SaldoMedioDia { get; set; }
+
     }
 }

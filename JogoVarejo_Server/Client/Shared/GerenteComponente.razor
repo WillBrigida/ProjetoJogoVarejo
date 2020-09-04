@@ -1,0 +1,87 @@
+﻿
+
+
+
+<div class="text-center" id="gerente">
+    @*<i class="fas fa-user-tie" style="font-size:30px" ;></i>*@
+    @Icon
+    <h1 class="display-4">@Titulo</h1>
+    <br />
+</div>
+
+
+<div>@ChildContent</div>
+
+
+<div class="card" id="card-gerente">
+    <div class="card-body">
+        <EditForm Model="@Grupo" OnValidSubmit="@OnAction1">
+            <div class="form-row">
+                <div class="form-group col-6">
+                    <label for="grupo">Meu Grupo:</label>
+                    <InputNumber Id="nome" class="form-control" @bind-Value="@Grupo.GrupoId" disabled />
+                </div>
+                <div class="form-group col-6">
+                    <label for="grupo">@GrupoOperadorGerente:</label>
+                    <InputNumber Id="nome" class="form-control" @bind-Value="@Grupo.GrupoOperadorId" disabled />
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group col">
+                    <label for="grupo">Quando: *</label>
+                    <InputTextArea Id="nome" class="form-control" @bind-Value="@Grupo.Quando" disabled="@Disabled" />
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group col">
+                    <label for="grupo">Quanto: *</label>
+                    <InputTextArea Id="nome" class="form-control" @bind-Value="@Grupo.Quanto" disabled="@Disabled" />
+                </div>
+            </div>
+
+            <div class="form-row">
+
+                <div class="form-group col-4">
+                    <button type="submit" class="btn btn-primary btn-lg btn-block" style="font-size:16px">@TextoBotao1</button>
+                </div>
+
+                <div class="form-group col-4" style="display:@Display">
+                    <button type="button" class="btn btn-primary btn-lg btn-block" style="font-size:16px" @onclick="@OnAction2">@TextoBotao2</button>
+                </div>
+
+                <div class="form-group col-4" style="display:@Display">
+                    <button type="button" class="btn btn-primary btn-lg btn-block" style="font-size:16px" @onclick="@OnAction3">@TextoBotao3</button>
+                </div>
+
+            </div>
+        </EditForm>
+
+    </div>
+</div>
+
+@code
+        {
+    [Parameter] public Grupo Grupo { get; set; }
+    [Parameter] public EventCallback OnAction1 { get; set; }
+    [Parameter] public EventCallback OnAction2 { get; set; }
+    [Parameter] public EventCallback OnAction3 { get; set; }
+    [Parameter] public string TextoBotao1 { get; set; } = "Editar";
+    [Parameter] public string TextoBotao2 { get; set; } = "Histórico";
+    [Parameter] public string TextoBotao3 { get; set; } = "Indicadores";
+    [Parameter] public string GrupoOperadorGerente { get; set; } = "Grupo Operador";
+
+
+    [Parameter] public bool Disabled { get; set; } = true;
+
+
+
+    [Parameter] public RenderFragment ChildContent { get; set; }
+
+    [Parameter] public string Titulo { get; set; } = "Gerente";
+    [Parameter] public RenderFragment Icon { get; set; }
+
+    [Parameter] public string Display { get; set; } = "";
+
+}

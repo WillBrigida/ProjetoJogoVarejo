@@ -1,55 +1,28 @@
 ﻿@page "/gerente"
+@inject NavigationManager Nav
 
 
 <AuthorizeView Roles="Admin, Aluno">
+
     <Authorized Context="Auth">
-        <div class="text-center" id="gerente">
-            <i class="fas fa-user-tie" style="font-size:30px" ;></i>
-            <h1 class="display-4">Gerente</h1>
-            <br />
-        </div>
 
-        <h6 class="text-center" style="color:mediumseagreen">@MensagemSucesso</h6>
-        <h6 class="text-center" style="color:tomato">@MensagemErro</h6>
+        <GerenteComponente Grupo="@Grupo"
+                           GrupoOperadorGerente="Grupo Gerente"
+                           TextoBotao1="@textoBotao1"
+                           Disabled="@disabled"
+                           Display="@display"
+                           OnAction2="@(()=> OnHistorico())"
+                           OnAction3="@(()=> OnIndicadores())"
+                           OnAction1="OnEditarSalvar">
+            <Icon>
+                <i class="fas fa-user-tie" style="font-size:30px" ;></i>
+            </Icon>
+            <ChildContent>
+                <h6 class="text-center" style="color:mediumseagreen">@MensagemSucesso</h6>
+                <h6 class="text-center" style="color:tomato">@MensagemErro</h6>
+            </ChildContent>
+        </GerenteComponente>
 
-        <div class="card" id="card-gerente">
-            <div class="card-body">
-
-                <EditForm Model="@Grupo" OnValidSubmit="Salvar">
-
-
-
-                    <div class="form-row">
-                        <div class="form-group col-6">
-                            <label for="grupo">Id:</label>
-                            <InputNumber Id="nome" class="form-control" @bind-Value="@Grupo.GrupoId" disabled />
-                        </div>
-                        <div class="form-group col-6">
-                            <label for="grupo">Grupo Operador:</label>
-                            <InputNumber Id="nome" class="form-control" @bind-Value="@Grupo.GrupoOperadorId" disabled />
-                        </div>
-                    </div>
-
-                    <div class="form-row">
-                        <div class="form-group col">
-                            <label for="grupo">Como: *</label>
-                            <InputTextArea Id="nome" class="form-control" @bind-Value="@Grupo.Como" />
-                        </div>
-                    </div>
-
-                    <div class="form-row">
-                        <div class="form-group col">
-                            <label for="grupo">Quando: *</label>
-                            <InputTextArea Id="nome" class="form-control" @bind-Value="@Grupo.Quando" />
-                        </div>
-                    </div>
-
-                    <button type="submit" class="btn btn-primary">Salvar</button>
-
-                </EditForm>
-
-            </div>
-        </div>
 
         @if (IsBusy == true)
         {
@@ -60,6 +33,21 @@
                 <p>carregando. . .</p>
             </div>
         }
+
+        <Modal @ref="modalHistorico"
+               P_TextoTitulo=""
+               TextoBotao="Indicadores"
+               OnAction="@OnIndicadores">
+            <Historicos />
+        </Modal>
+
+        <Modal @ref="modalIndicadores"
+               P_TextoTitulo=""
+               TextoBotao="Historico"
+               OnAction="@OnHistorico">
+            <IndicadoresComponent />
+        </Modal>
+
     </Authorized>
 
     <NotAuthorized Context="Auth">
@@ -67,27 +55,95 @@
     </NotAuthorized>
 </AuthorizeView>
 
-
-
-
-@code
-        {
-    [Parameter] public Grupo Grupo { get; set; } = new Grupo();
-    public Grupo Grupo1 { get; set; }
-
+@code   {
+    public Grupo Grupo { get; set; } = new Grupo();
     public string MensagemErro { get; set; }
     public string MensagemSucesso { get; set; }
     public bool IsDisabled { get; set; }
     public bool IsBusy { get; set; }
+    protected Modal modalHistorico;
+    protected Modal modalIndicadores;
+
+    private string textoBotao1 = "Editar";
+    private bool disabled = true;
+    private string display = "";
 
     protected override async Task OnInitializedAsync()
     {
-        Grupo1 = Grupo;
+        Grupo = await Mock.ListaGrupo(3);
     }
 
-    protected void Salvar()
+    protected  void OnEditarSalvar()
     {
+        Console.WriteLine(" => OnEditarSalvar");
 
+        MensagemSucesso = "";
+        MensagemErro = "";
+
+        var fase = 1;
+
+        if (fase < 1)
+        {
+            MensagemErro = "O Jogo ainda não começou! Aguarde o indicação do professor.";
+            return;
+        }
+
+        if (fase == 1 && textoBotao1.Contains("Editar"))
+        {
+            textoBotao1 = "Salvar";
+            disabled = false;
+            display = "none";
+            StateHasChanged();
+            return;
+        }
+
+        if (fase == 1 && textoBotao1.Contains("Salvar"))
+        {
+            OnSalvar();
+            textoBotao1 = "Editar";
+            disabled = true;
+            display = "";
+            StateHasChanged();
+            return;
+        }
+
+        Console.WriteLine(" => Salvar");
+
+        MensagemSucesso = "Os campos foram salvos com sucesso!";
+    }
+
+
+    protected async Task OnHistorico()
+    {
+        Console.WriteLine(" => OnHistorico");
+        await Task.Run(() => modalIndicadores.Ocultar());
+
+        await Task.Run(() => modalHistorico.Exibir());
+        MensagemSucesso = "";
+    }
+
+    protected async Task OnIndicadores()
+    {
+        await Task.Run(() => modalHistorico.Ocultar());
+
+        await Task.Run(() => modalIndicadores.Exibir());
+        MensagemSucesso = "";
+    }
+
+    protected async Task BtnAlertAceitar()
+    {
+        await Task.Run(() => modalHistorico.Ocultar());
+        await Task.Run(() => modalIndicadores.Ocultar());
+    }
+
+    protected async Task AbrirIndicadoares()
+    {
+        Nav.NavigateTo("/indicadores");
+    }
+
+
+    protected async Task OnSalvar()
+    {
+        MensagemSucesso = "Salvo com sucesso!";
     }
 }
-

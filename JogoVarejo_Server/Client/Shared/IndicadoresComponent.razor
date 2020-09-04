@@ -1,0 +1,87 @@
+﻿@page "/indicadores"
+
+<div class="text-center" id="indicadore">
+    <h1 class="display-4">Indicadores</h1>
+    <br />
+    <br />
+</div>
+
+<div class="row" id="card-indicadore">
+    <div class="col-sm-6">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Atendimento aos Clientes:</h5>
+                <p>Clientes Atendidos: <span style="color:darkolivegreen;font-weight:bold">@Indicadores.ClientesAtendidos</span></p>
+                <p>Ganho Realizado ($): <span style="color:darkolivegreen;font-weight:bold">@Indicadores.Ganho</span></p>
+                <p>Clientes Perdidos: <span style="color:darkolivegreen;font-weight:bold">@Indicadores.ClientesPerdidos</span></p>
+                <p>Ganho Perdido ($): <span style="color:darkolivegreen;font-weight:bold">@Indicadores.GanhoPerdido</span></p>
+                <p>Nível de Serviço ao Cliente (%): <span style="color:darkolivegreen;font-weight:bold">@Indicadores.NivelServiçoCliente</span></p>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="col-sm-6">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Estoque Médio:</h5>
+                <p>Estoque Médio: <span style="color:darkolivegreen;font-weight:bold">@Indicadores.EstoqueMed</span></p>
+                <p>Cobertura Estoque Médio (dias): <span style="color:darkolivegreen;font-weight:bold">@Indicadores.CobEstoqueMed</span></p>
+                <p>Capital Estoque Médio ($): <span style="color:darkolivegreen;font-weight:bold">@Indicadores.CapitalEstoqueMed</span></p>
+                <p>Custo Estocar ($): <span style="color:darkolivegreen;font-weight:bold">@Indicadores.CustoEstocar</span></p>
+                <p>Giro (vezes/ano): <span style="color:darkolivegreen;font-weight:bold">@Indicadores.Giro</span></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row" id="card-indicadore">
+    <div class="col-sm-6">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Estoque Máximo:</h5>
+                <p>Estoque Máximo: <span style="color:darkolivegreen;font-weight:bold">@Indicadores.EstoqueMax</span></p>
+                <p>Cobertura Estoque Máximo (dias): <span style="color:darkolivegreen;font-weight:bold">@Indicadores.CobEstoqueMax</span></p>
+                <p>Capital Estoque Máximo ($): <span style="color:darkolivegreen;font-weight:bold">@Indicadores.CapitalEstoqueMax</span></p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-sm-6">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Encomendas:</h5>
+                <p>Número de Encomendas  ($): <span style="color:darkolivegreen;font-weight:bold">@Indicadores.NumEncomendas</span></p>
+                <p>Quebras de Estoque: <span style="color:darkolivegreen;font-weight:bold">@Indicadores.QuebrasEstoque</span></p>
+                <p>Nível de Serviço do Suprimento: <span style="color:darkolivegreen;font-weight:bold">@Indicadores.NivelServiçoSupr</span></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<div class="row" id="card-indicadore">
+    <div class="col-sm">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Apuração do resultado:</h5>
+                <p>Estoque Médio: <span style="color:darkolivegreen;font-weight:bold">@Indicadores.EstoqueMed</span></p>
+                <p>Cobertura Estoque Médio (dias): <span style="color:darkolivegreen;font-weight:bold">@Indicadores.CobEstoqueMed</span></p>
+                <p>Capital Estoque Médio ($): <span style="color:darkolivegreen;font-weight:bold">@Indicadores.CapitalEstoqueMed</span></p>
+                <p>Custo Estocar ($): <span style="color:darkolivegreen;font-weight:bold">@Indicadores.CustoEstocar</span></p>
+                <p>Giro (vezes/ano): <span style="color:darkolivegreen;font-weight:bold">@Indicadores.Giro</span></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+
+    public Indicadores Indicadores { get; set; } = new Indicadores();
+
+    protected override async Task OnInitializedAsync()
+    {
+        Indicadores = await Mock.ListaIndicadores(1);
+    }
+}

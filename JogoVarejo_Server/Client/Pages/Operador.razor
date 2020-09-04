@@ -1,0 +1,162 @@
+﻿@page "/operador"
+@inject NavigationManager Nav
+
+<GerenteComponente Grupo="@Grupo"
+                   Display="none"
+                   TextoBotao1="Decidir"
+                   Titulo="Operador"
+                   Disabled="true"
+                   OnAction2="@(()=> OnHistorico())"
+                   OnAction3="@(()=> OnIndicadores())"
+                   OnAction1="OnDecidir">
+    <Icon><i class="fas fa-user-friends" style="font-size:30px" ;></i></Icon>
+    <ChildContent>
+        <h6 class="text-center" style="color:mediumseagreen">@MensagemSucesso</h6>
+        <h6 class="text-center" style="color:tomato">@MensagemErro</h6>
+    </ChildContent>
+</GerenteComponente>
+
+
+<Modal @ref="modalHistorico"
+       P_TextoTitulo=""
+       TextoBotao="Incluir Movimentos"
+       OnAction="@OnIncluirMovimento">
+    <Historicos />
+</Modal>
+
+<Modal @ref="modalIncluirMovimento"
+       Display="none"
+       P_TextoTitulo=""
+       TextoBotao="Salvar"
+       OnAction="@OnSalvar">
+
+    <div class="text-center" id="operador">
+        <h1 class="display-4">Incluir Movimentos</h1>
+        <br />
+    </div>
+
+    <div class="card" id="card-operador">
+        <div class="card-body">
+
+            <EditForm Model="@Movimento" OnValidSubmit="@OnSalvar">
+                <div class="form-row">
+                    <div class="col-md-12 mb-3">
+                        <label for="grupo">Dia:</label>
+                        <InputNumber Id="nome" class="form-control" @bind-Value="@Movimento.Dia" disabled />
+                    </div>
+
+                </div>
+
+                <div class="form-row">
+                    <div class="col-md-12 mb-3">
+                        <label for="grupo">Recebido:</label>
+                        <InputNumber Id="nome" class="form-control" @bind-Value="@Movimento.Recebido" disabled />
+                    </div>
+
+                </div>
+
+
+                <div class="form-row">
+
+                    <div class="col-md-12 mb-3">
+                        <label for="grupo">A Receber:</label>
+                        <InputNumber Id="nome" class="form-control" @bind-Value="@Movimento.AReceber" disabled />
+                    </div>
+
+                </div>
+
+                <div class="form-row">
+
+
+                    <div class="col-md-12 mb-3">
+                        <label for="grupo">Saldo Inicial:</label>
+                        <InputNumber Id="nome" class="form-control" @bind-Value="@Movimento.SaldoInicial" disabled />
+                    </div>
+
+                </div>
+
+
+
+
+                <div class="form-row">
+                    <div class="col-md-12 mb-3">
+                        <label for="grupo">Quantidade de Compra:</label>
+                        <InputNumber Id="nome" class="form-control" @bind-Value="@Movimento.Comprado" />
+                    </div>
+                </div>
+
+                <button class="btn btn-primary" type="submit">Salvar</button>
+            </EditForm>
+        </div>
+    </div>
+</Modal>
+
+@code   {
+    public Movimento Movimento { get; set; } = new Movimento();
+    public Grupo Grupo { get; set; } = new Grupo();
+
+    public string MensagemErro { get; set; }
+    public string MensagemSucesso { get; set; }
+    public bool IsDisabled { get; set; }
+    public bool IsBusy { get; set; }
+    protected Modal modalHistorico;
+    protected Modal modalIndicadores;
+    protected Modal modalIncluirMovimento;
+
+    protected override async Task OnInitializedAsync()
+    {
+        Movimento = await Mock.ListaMovimentos(1);
+        Grupo = await Mock.ListaGrupo(3);
+    }
+
+    protected async Task OnDecidir()
+    {
+        Console.WriteLine(" => Decidir");
+        await Task.Run(() => modalHistorico.Exibir());
+        //MensagemSucesso = "Os campos foram salvos com sucesso!";
+    }
+
+
+    protected async Task OnHistorico()
+    {
+        Console.WriteLine(" => OnHistorico");
+        await Task.Run(() => modalIndicadores.Ocultar());
+
+        await Task.Run(() => modalHistorico.Exibir());
+        MensagemSucesso = "";
+    }
+
+    protected async Task OnIncluirMovimento()
+    {
+        Console.WriteLine(" => OnIncluirMovimento");
+        await Task.Run(() => modalHistorico.Ocultar());
+
+        await Task.Run(() => modalIncluirMovimento.Exibir());
+        MensagemSucesso = "";
+    }
+
+    protected async Task OnIndicadores()
+    {
+        await Task.Run(() => modalHistorico.Ocultar());
+
+        await Task.Run(() => modalIndicadores.Exibir());
+        MensagemSucesso = "";
+    }
+
+    protected async Task BtnAlertAceitar()
+    {
+        await Task.Run(() => modalHistorico.Ocultar());
+        await Task.Run(() => modalIndicadores.Ocultar());
+    }
+
+    protected async Task AbrirIndicadoares()
+    {
+        Nav.NavigateTo("/indicadores");
+    }
+
+    protected async Task OnSalvar()
+    {
+        await Task.Run(() => modalIncluirMovimento.Ocultar());
+        await Task.Run(() => modalHistorico.Exibir());
+    }
+}

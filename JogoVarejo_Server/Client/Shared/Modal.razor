@@ -5,37 +5,63 @@
 {
 <div class="modal-backdrop show"></div>
 
-                <div class="modal" tabindex="-1" role="dialog" style="display: block;">
-                    <div class="modal-dialog modal-xl modal-dialog-scrollable" role="document">
+                <div class="modal text-left " tabindex="-1" role="dialog" style="display: block;" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered modal-xl modal-dialog-scrollable " role="document">
                         <div class="modal-content">
-                            <div class="modal-header">
+                            <div class="modal-header" style="display:@Display">
                                 <h5 class="modal-title">@P_TextoTitulo</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="font-size:30px; color:#4a8fa0" @onclick="@(()=> mostrarModal = false)">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="font-size:30px; color:#4a8fa0" @onclick="@(() => mostrarModal = false)">
                                     <span aria-hidden="true"><i class="fas fa-times"></i></span>
                                 </button>
                             </div>
-                            <div class="modal-body">
+
+                            <div class="modal-body" >
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="font-size:30px; text-align:right; display:@visibility; color:#4a8fa0" @onclick="@(() => mostrarModal = false)">
+                                    <span aria-hidden="true"><i class="fas fa-times"></i></span>
+                                </button>
                                 @ChildContent
                             </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-primary" @onclick="@ECB_Aceitar">@P_TextoBotaoAceitar</button>
-                                <button type="button" class="btn btn-outline-primary" @onclick="@(()=> mostrarModal = false)">@P_TextoBotaoCancelar</button>
+
+                            <div class="modal-footer" style="display:@Display">
+                                <button type="button" class="btn btn-primary" @onclick="@OnAction">@TextoBotao</button>
+                                @*<button type="button" class="btn btn-outline-primary" @onclick="@(()=> mostrarModal = false)">@TextoBotao</button>*@
                             </div>
                         </div>
                     </div>
                 </div>}
-
 @code
 { bool mostrarModal = false;
 
     [Parameter] public string P_TextoTitulo { get; set; } = "Alerta!";
     [Parameter] public RenderFragment ChildContent { get; set; }
-    [Parameter] public EventCallback ECB_Aceitar { get; set; }
-    [Parameter] public string P_TextoBotaoAceitar { get; set; } = "Ok";
-    [Parameter] public string P_TextoBotaoCancelar { get; set; } = "Cancelar";
-    public void Exibir()
+    [Parameter] public EventCallback OnAction { get; set; }
+    [Parameter] public string Display { get; set; } = "";
+    [Parameter] public string TextoBotao { get; set; } = "Indicadores";
+
+    string visibility { get; set; }
+
+    public void Exibir() => mostrarModal = true;
+    public void Ocultar() => mostrarModal = false;
+
+    protected string InverterVisibility()
     {
-        mostrarModal = true;
+        var a =  !string.IsNullOrEmpty(Display) ?  null : "none";
+        return a;
     }
 
-    public void Ocultar() => mostrarModal = false; }
+    //protected override async Task OnInitializedAsync()
+    //{
+    //    InverterVisibility();
+    //}
+
+    //protected override void OnAfterRender(bool firstRender)
+    //{
+    //    var a = !string.IsNullOrEmpty(Display) ? null : "none";
+    //    visibility = a;
+    //}
+
+    protected override async Task OnInitializedAsync()
+    {
+        visibility = !string.IsNullOrEmpty(Display) ? null : "none";
+    }
+}

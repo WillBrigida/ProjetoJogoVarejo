@@ -27,7 +27,7 @@
                             <th>Demanda</th>
                             <th>Vendido</th>
                             <th>Saldo Final</th>
-                            <th>Estoque Médio</th>
+                            <th>Saldo Médio</th>
 
                         </tr>
                     </thead>
@@ -63,7 +63,7 @@
 
 
 @code { 
-        [Parameter] public List<Historico> Historico { get; set; }
+        [Parameter] public List<Movimento> Historico { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
