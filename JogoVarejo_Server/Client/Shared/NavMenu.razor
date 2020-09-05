@@ -41,7 +41,7 @@
 
         <AuthorizeView Roles="Admin, Aluno">
             <li class="nav-item px-3">
-                <NavLink class="nav-link" href="gerente" >
+                <NavLink class="nav-link" href="gerente">
                     <span aria-hidden="true"><i class="oi oi-account-login"></i></span> Gerente
                 </NavLink>
             </li>
@@ -53,6 +53,10 @@
         </AuthorizeView>
 
     </ul>
+    <CascadingValue Value="@MenuFases.Fase">
+        <FaseComponent/>
+    </CascadingValue>
+    
 </div>
 
 @code {
@@ -63,5 +67,14 @@
     private void ToggleNavMenu()
     {
         collapseNavMenu = !collapseNavMenu;
+    }
+}
+
+
+@code{
+    public static class MenuFases
+    {
+
+        public static string Fase { get; set; } = ". . .";
     }
 }

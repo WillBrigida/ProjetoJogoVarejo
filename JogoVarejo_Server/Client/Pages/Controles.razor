@@ -1,0 +1,61 @@
+﻿@page "/controle"
+@inject NavigationManager Nav
+@inject HttpClient Http
+<NavMenuConfiguracao />
+
+<div class="text-center" id="controles">
+    <h1 class="display-4">Controle</h1>
+    <br />
+</div>
+
+<h6 class="text-center" style="color:mediumseagreen;">@MensagemSucesso</h6>
+<h6 class="text-center" style="color:tomato">@MensagemErro</h6>
+
+
+<div class="card cor-site" id="card-controles">
+    <div class="card-body">
+        <h3 class="text-center">Fase/Duração</h3>
+        <EditForm Model="@controle" OnValidSubmit="OnSalvar">
+
+            <div class="form-group">
+                <label for="grupo">Fase: *</label>
+                <InputNumber Id="nome" class="form-control" @bind-Value="controle.Fase" />
+                <ValidationMessage For="@(() => controle.Fase)" />
+            </div>
+
+            <div class="form-group">
+                <label for="grupo">Duração: *</label>
+                <InputNumber type="password" Id="nome" class="form-control" @bind-Value="controle.Duracao" />
+                <ValidationMessage For="@(() => controle.Duracao)" />
+            </div>
+            <br />
+            <span aria-hidden="true">
+                <button type="submit" class="btn btn-primary">Salvar</button>
+            </span>
+        </EditForm>
+    </div>
+</div>
+
+@code{
+    public int MyProperty { get; set; }
+    public string MensagemErro { get; set; }
+    public string MensagemSucesso { get; set; }
+    public bool IsBusy { get; set; }
+    protected FaseComponent faseComponent;
+
+
+    public JogoVarejo_Server.Shared.Models.Controle controle = new JogoVarejo_Server.Shared.Models.Controle();
+
+    protected async Task OnSalvar()
+    {
+       await Http.PostJsonAsync("api/v1/controle/con", controle);
+
+        //JogoVarejo_Server.Client.Shared.NavMenu.MenuFases.Fase = controle.Fase.ToString();
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        controle = await Http.GetJsonAsync<JogoVarejo_Server.Shared.Models.Controle>("api/v1/controle/con");
+        //var users = await Http.GetJsonAsync<List<Usuario>>("api/v1/controle/get");
+    }
+}

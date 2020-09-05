@@ -4,6 +4,8 @@
 
 <AuthorizeView>
     <Authorized>
+       
+
         <div class="text-center">
             <h1 class="display-4">Grupos</h1>
             <br />
@@ -16,86 +18,86 @@
         }
         else
         {
-    <div style="text-align:center; margin: 0px 60px;">
+            <div style="text-align:center; margin: 0px 60px;">
 
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th>Id</th>
-                    <th>Quando</th>
-                    <th>Quanto</th>
-                    <th>Grupo Operador</th>
-                    <th></th>
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Id</th>
+                            <th>Quando</th>
+                            <th>Quanto</th>
+                            <th>Grupo Operador</th>
+                            <th></th>
 
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var item in grupos)
-                {
-                    <tr>
-                        <td>@item.GrupoId</td>
-                        <td>@item.Quando</td>
-                        <td>@item.Quanto</td>
-                        <td>@item.GrupoOperadorId</td>
-                        <td class="text-right">
-                            <button class="btn btn-link" style="color:cornflowerblue;" @onclick="@(()=> OnDetalheGrupo(item.GrupoId))"><i class="far fa-edit"></i></button>
-                            <button class="btn btn btn-link" style="color:mediumseagreen;" @onclick="@(()=> OnHistorico())"><i class="fas fa-history"></i></button>
-                            <button class="btn btn btn-link" style="color:darkorange;" @onclick="@(()=> OnIndicadores())"><i class="fas fa-align-center"></i></button>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in grupos)
+                        {
+                            <tr>
+                                <td>@item.GrupoId</td>
+                                <td>@item.Quando</td>
+                                <td>@item.Quanto</td>
+                                <td>@item.GrupoOperadorId</td>
+                                <td class="text-right">
+                                    <button class="btn btn-link" style="color:cornflowerblue;" @onclick="@(()=> OnDetalheGrupo(item.GrupoId))"><i class="far fa-edit"></i></button>
+                                    <button class="btn btn btn-link" style="color:mediumseagreen;" @onclick="@(()=> OnHistorico())"><i class="fas fa-history"></i></button>
+                                    <button class="btn btn btn-link" style="color:darkorange;" @onclick="@(()=> OnIndicadores())"><i class="fas fa-align-center"></i></button>
 
-                        </td>
+                                </td>
 
-                    </tr>
-                }
-            </tbody>
-        </table>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
 
-        <Modal @ref="modalHistorico"
-               P_TextoTitulo=""
-               OnAction="OnIndicadores"
-               TextoBotao="Indicadores">
-            <Historicos />
-        </Modal>
+                <Modal @ref="modalHistorico"
+                       P_TextoTitulo=""
+                       OnAction="OnIndicadores"
+                       TextoBotao="Indicadores">
+                    <Historicos />
+                </Modal>
 
-        <Modal @ref="modalGerente"
-               P_TextoTitulo=""
-               Display="none"
-               OnAction="OnIndicadores">
+                <Modal @ref="modalGerente"
+                       P_TextoTitulo=""
+                       Display="none"
+                       OnAction="OnIndicadores">
 
-            @*<GerenteComponente Grupo="@Grupo"
-                           OnAction2="@(()=> OnHistorico())"
-                           OnAction3="@(()=> OnIndicadores())"
-                           OnAction1="Salvar">
+                    @*<GerenteComponente Grupo="@Grupo"
+                                       OnAction2="@(()=> OnHistorico())"
+                                       OnAction3="@(()=> OnIndicadores())"
+                                       OnAction1="Salvar">
 
-            <h6 class="text-center" style="color:mediumseagreen">@MensagemSucesso</h6>
-            <h6 class="text-center" style="color:tomato">@MensagemErro</h6>
-        </GerenteComponente>*@
+                        <h6 class="text-center" style="color:mediumseagreen">@MensagemSucesso</h6>
+                        <h6 class="text-center" style="color:tomato">@MensagemErro</h6>
+                    </GerenteComponente>*@
 
-            <GerenteComponente Grupo="@Grupo"
-                               GrupoOperadorGerente="Grupo Gerente"
-                               TextoBotao1="@textoBotao1"
-                               Disabled="@disabled"
-                               Display="@display"
-                               OnAction2="@(()=> OnHistorico())"
-                               OnAction3="@(()=> OnIndicadores())"
-                               OnAction1="OnEditarSalvar">
-                <Icon>
-                    <i class="fas fa-user-tie" style="font-size:30px" ;></i>
-                </Icon>
-                <ChildContent>
-                    <h6 class="text-center" style="color:mediumseagreen">@MensagemSucesso</h6>
-                    <h6 class="text-center" style="color:tomato">@MensagemErro</h6>
-                </ChildContent>
-            </GerenteComponente>
-        </Modal>
+                    <GerenteComponente Grupo="@Grupo"
+                                       GrupoOperadorGerente="Grupo Gerente"
+                                       TextoBotao1="@textoBotao1"
+                                       Disabled="@disabled"
+                                       Display="@display"
+                                       OnAction2="@(()=> OnHistorico())"
+                                       OnAction3="@(()=> OnIndicadores())"
+                                       OnAction1="OnEditarSalvar">
+                        <Icon>
+                            <i class="fas fa-user-tie" style="font-size:30px" ;></i>
+                        </Icon>
+                        <ChildContent>
+                            <h6 class="text-center" style="color:mediumseagreen">@MensagemSucesso</h6>
+                            <h6 class="text-center" style="color:tomato">@MensagemErro</h6>
+                        </ChildContent>
+                    </GerenteComponente>
+                </Modal>
 
-        <Modal @ref="modalIndicadores"
-               P_TextoTitulo=""
-               TextoBotao="Histórico"
-               OnAction="@OnHistorico">
-            <IndicadoresComponent />
-        </Modal>
+                <Modal @ref="modalIndicadores"
+                       P_TextoTitulo=""
+                       TextoBotao="Histórico"
+                       OnAction="@OnHistorico">
+                    <IndicadoresComponent />
+                </Modal>
 
-    </div>
+            </div>
         }
     </Authorized>
 
@@ -121,6 +123,7 @@
     private string textoBotao1 = "Editar";
     private bool disabled = true;
     private string display = "";
+    [Parameter] public string DisplayNav { get; set; } = "";
 
 
 

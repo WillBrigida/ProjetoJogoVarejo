@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace JogoVarejo_Server.Server.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20200831011229_Back")]
-    partial class Back
+    [Migration("20200905193601_MigrationInit")]
+    partial class MigrationInit
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

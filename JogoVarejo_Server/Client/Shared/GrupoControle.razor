@@ -1,0 +1,82 @@
+﻿@page "/grupocontrole"
+@inject HttpClient Http
+
+<AuthorizeView>
+    <Authorized Context="Auth">
+        <NavMenuConfiguracao />
+
+        <div class="text-center" id="grupo-controles">
+            <h1 class="display-4">Controle Usuarios</h1>
+            <br />
+        </div>
+
+        @if (grupos == null)
+        {
+            <p><em>Loading...</em></p>
+        }
+        else
+        {
+            <div id="card-grupo-controles">
+                <table class="table table-striped" >
+                    <thead class="cor-site" style="color:#d7d7d7">
+                        <tr>
+                            <th>Id</th>
+                            <th>Nome</th>
+                            <th>Grupo Operador</th>
+                            <th></th>
+
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in usuarios)
+                        {
+                        <tr>
+                            <td width="150px">
+                                @item.GrupoUsuarioId
+                            </td>
+                            <td width="150px">
+                                @item.Nome
+                            </td>
+
+                            <td>
+                                <EditForm Model="usuarios">
+                                    <InputText Id="GrupoOperadorId" class="form-control" @bind-Value="item.Login" />
+                                </EditForm>
+                            </td>
+
+                            <td>
+                                <button class="btn btn-link" style="color:cornflowerblue;" @onclick="@(()=> OnDetalheGrupo(item))"><i class="far fa-trash-alt" style="color:tomato"></i></button>
+                            </td>
+                        </tr>
+                        }
+                    </tbody>
+                </table>
+
+            </div>
+        }
+    </Authorized>
+
+</AuthorizeView>
+
+@code {
+    private List<Grupo> grupos = new List<Grupo>();
+    private List<Usuario> usuarios = new List<Usuario>();
+    public Grupo Grupo { get; set; } = new Grupo();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await CarregarItens();
+    }
+
+    async Task CarregarItens()
+    {
+        var users = await Http.GetJsonAsync<List<Usuario>>("api/v1/acesso/usuarios");
+        usuarios = users.OrderBy(x => x.GrupoUsuarioId).ToList();
+    }
+
+    async Task  OnDetalheGrupo(Usuario usuario)
+    {
+        await Http.PostJsonAsync("api/v1/acesso/deletar", usuario);
+        await CarregarItens();
+    }
+}

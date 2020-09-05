@@ -2,8 +2,11 @@
 @inject IAuthService AuthService
 @inject NavigationManager Nav
 
+
 <AuthorizeView Roles="Admin, Professor">
     <Authorized Context="Auth">
+        <NavMenuConfiguracao />
+
         <div class="text-center" id="registro">
             <h1 class="display-4">Cadastro</h1>
             <br />
@@ -93,7 +96,7 @@
         {
     public Usuario Usuario = new Usuario();
     public string[] TipoUsuario { get; set; } = new string[] { "-Selecione-", "Professor", "Aluno" };
-    public string[] Grupos { get; set; } = new string[] { "-Selecione-", "1", "2", "3", "4", "5", "6", "7", "8" };
+    public string[] Grupos { get; set; } = new string[] { "-Selecione-", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12" };
     public string MensagemErro { get; set; }
     public string MensagemSucesso { get; set; }
     public bool IsDisabled { get; set; }
@@ -111,8 +114,8 @@
             return;
         }
 
-        if (Usuario.TipoUsuarioId == 2 && Usuario.GrupoUsuarioId == 0 )
-        { 
+        if (Usuario.TipoUsuarioId == 2 && Usuario.GrupoUsuarioId == 0)
+        {
             MensagemErro = "Selecione um Grupo";
             return;
         }
@@ -149,7 +152,11 @@
             return;
         }
 
+
         Usuario.GrupoUsuarioId = int.Parse(e.Value.ToString());
+        Usuario.Login = $"grupo{Usuario.GrupoUsuarioId}";
+        Usuario.Senha = $"grupo{Usuario.GrupoUsuarioId}";
+        Usuario.Nome = $"Grupo {Usuario.GrupoUsuarioId}";
         StateHasChanged();
     }
 
@@ -174,5 +181,6 @@
         else
             Usuario.TipoUsuarioId = 2;
     }
+
 }
 

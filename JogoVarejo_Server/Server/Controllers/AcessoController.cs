@@ -8,6 +8,7 @@ using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
@@ -35,15 +36,44 @@ namespace JogoVarejo_Server.Server.Controller
 
 
 
-        [HttpGet("modelo")]
-        public async Task<ActionResult> GetModelo()
-        {
-            var claimsIdentity = this.User.Identity as ClaimsIdentity;
-            var userId = claimsIdentity.FindFirst(JwtRegisteredClaimNames.Sub)?.Value;
-            var userId1 = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            var userId2 = claimsIdentity.FindFirst(ClaimTypes.Name)?.Value;
+        //[HttpGet("modelo")]
+        //public async Task<ActionResult> GetModelo()
+        //{
+        //    var claimsIdentity = this.User.Identity as ClaimsIdentity;
+        //    var userId = claimsIdentity.FindFirst(JwtRegisteredClaimNames.Sub)?.Value;
+        //    var userId1 = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        //    var userId2 = claimsIdentity.FindFirst(ClaimTypes.Name)?.Value;
 
-            return base.Ok(new Usuario());
+        //    return base.Ok(new Usuario());
+        //}
+
+        [HttpGet("usuarios")]
+        public async Task<ActionResult<List<Usuario>>> Login()
+        {
+            var usuario = await _userManager.Users.Where(u => u.TipoUsuarioId == 2).ToListAsync();
+
+            var listUsuario = new List<Usuario>();
+            foreach (var item in usuario)
+            {
+                listUsuario.Add(new Usuario
+                {
+                    GrupoUsuarioId = item.GrupoUsuarioId,
+                    Nome = item.Nome,
+                    Login = item.Login,
+                    TipoUsuarioId = item.TipoUsuarioId,
+                });
+            }
+            return listUsuario;
+        }
+
+        [HttpPost("deletar")]
+
+        public async Task<ActionResult> Delete([FromBody] Usuario usuario)
+        {
+            var user = await _userManager.Users.Where(x => x.GrupoUsuarioId == usuario.GrupoUsuarioId).FirstOrDefaultAsync();
+            await _userManager.DeleteAsync(user);
+
+            return Ok();
         }
 
 
