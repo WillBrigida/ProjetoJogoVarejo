@@ -1,14 +1,20 @@
-﻿<ul class="nav nav-tabs text-right" style="width: 35%; margin: 0 auto 40px; text-align:center; align-content:center">
-    <li class="nav-item">
-        <NavLink class="nav-link" href="registro">Cadastro</NavLink>
-    </li>
-    <li class="nav-item">
-        <NavLink class="nav-link" href="grupocontrole">Gerenciar Usuários</NavLink>
-    </li>
-    <li class="nav-item">
-        <NavLink class="nav-link" href="controle">Controle</NavLink>
-    </li>
-</ul>
+﻿<AuthorizeView Roles="Admin, Professor">
+    <Authorized>
+        <ul class="nav nav-tabs text-right" style="width: 35%; margin: 0 auto 40px; text-align:center; align-content:center">
+            <li class="nav-item">
+                <NavLink class="nav-link" href="registro">Cadastro</NavLink>
+            </li>
+            <li class="nav-item">
+                <NavLink class="nav-link" href="grupocontrole">Gerenciar Usuários</NavLink>
+            </li>
+            <li class="nav-item">
+                <NavLink class="nav-link" href="controle">Controle</NavLink>
+            </li>
+        </ul>
+    </Authorized>
+</AuthorizeView>
+
+
 
 
 @code {

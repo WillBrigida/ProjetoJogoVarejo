@@ -1,5 +1,7 @@
 ﻿@page "/gerente"
 @inject NavigationManager Nav
+@inject HttpClient Http
+
 
 
 <AuthorizeView Roles="Admin, Aluno">
@@ -68,23 +70,35 @@
     private bool disabled = true;
     private string display = "";
 
+    int fase;
+
     protected override async Task OnInitializedAsync()
     {
         Grupo = await Mock.ListaGrupo(3);
+
+        var respose = await Http.GetJsonAsync<GenericResult<JogoVarejo_Server.Shared.Models.Controle>>("api/v1/controle/");
+        if (respose.Sucesso)
+        {
+            fase = respose.obj.Fase;
+        }
     }
 
-    protected  void OnEditarSalvar()
+    protected void OnEditarSalvar()
     {
         Console.WriteLine(" => OnEditarSalvar");
 
         MensagemSucesso = "";
         MensagemErro = "";
 
-        var fase = 1;
-
         if (fase < 1)
         {
             MensagemErro = "O Jogo ainda não começou! Aguarde o indicação do professor.";
+            return;
+        }
+
+        if (fase > 1)
+        {
+            MensagemErro = "Você não pode mais editar esses campos!";
             return;
         }
 

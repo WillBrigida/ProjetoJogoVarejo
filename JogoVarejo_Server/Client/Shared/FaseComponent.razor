@@ -14,8 +14,10 @@
     {
         var respose = await Http.GetJsonAsync<GenericResult<JogoVarejo_Server.Shared.Models.Controle>>("api/v1/controle/");
         if (respose.Sucesso)
-            Fase = $"Fase {respose.obj.Fase}";
+        {
+            Fase = respose.obj.Fase > 0 ? $"Fase {respose.obj.Fase}" : "Aguarde. . .";
+        }
         else
             Fase = $"Aguarde. . .";
-    }    
+    }
 }

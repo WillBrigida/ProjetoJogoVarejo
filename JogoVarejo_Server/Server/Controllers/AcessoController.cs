@@ -61,6 +61,7 @@ namespace JogoVarejo_Server.Server.Controller
                     Nome = item.Nome,
                     Login = item.Login,
                     TipoUsuarioId = item.TipoUsuarioId,
+                    Senha = item.Senha
                 });
             }
             return listUsuario;

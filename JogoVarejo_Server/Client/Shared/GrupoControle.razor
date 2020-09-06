@@ -1,7 +1,7 @@
 ﻿@page "/grupocontrole"
 @inject HttpClient Http
 
-<AuthorizeView>
+<AuthorizeView Roles="Admin, Professor">
     <Authorized Context="Auth">
         <NavMenuConfiguracao />
 
@@ -23,6 +23,7 @@
                             <th>Id</th>
                             <th>Nome</th>
                             <th>Grupo Operador</th>
+                            <th>Senha</th>
                             <th></th>
 
                         </tr>
@@ -31,7 +32,7 @@
                         @foreach (var item in usuarios)
                         {
                         <tr>
-                            <td width="150px">
+                            <td >
                                 @item.GrupoUsuarioId
                             </td>
                             <td width="150px">
@@ -45,6 +46,10 @@
                             </td>
 
                             <td>
+                                @item.Senha
+                            </td>
+
+                            <td>
                                 <button class="btn btn-link" style="color:cornflowerblue;" @onclick="@(()=> OnDetalheGrupo(item))"><i class="far fa-trash-alt" style="color:tomato"></i></button>
                             </td>
                         </tr>
@@ -55,6 +60,9 @@
             </div>
         }
     </Authorized>
+    <NotAuthorized>
+        <JogoVarejo_Server.Client.Pages.Index />
+    </NotAuthorized>
 
 </AuthorizeView>
 

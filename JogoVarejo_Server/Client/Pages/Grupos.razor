@@ -2,7 +2,7 @@
 @inject NavigationManager Nav
 
 
-<AuthorizeView>
+<AuthorizeView Roles="Admin, Professor">
     <Authorized>
        
 
@@ -102,7 +102,7 @@
     </Authorized>
 
     <NotAuthorized>
-        <Login />
+        <JogoVarejo_Server.Client.Pages.Index />
     </NotAuthorized>
 </AuthorizeView>
 
