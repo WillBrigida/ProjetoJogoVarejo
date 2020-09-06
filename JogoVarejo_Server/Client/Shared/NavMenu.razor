@@ -1,12 +1,13 @@
-﻿
+﻿@inject AppState AppState
+@implements IDisposable
+@inject AppState AppState
+
 <div class="top-row pl-4 navbar navbar-dark">
     <a class="navbar-brand" href="">Jogo Varejo</a>
     <button class="navbar-toggler" @onclick="ToggleNavMenu">
         <span class="navbar-toggler-icon"></span>
     </button>
 </div>
-
-
 
 
 <div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
@@ -53,10 +54,9 @@
         </AuthorizeView>
 
     </ul>
-    <CascadingValue Value="@MenuFases.Fase">
-        <FaseComponent/>
-    </CascadingValue>
-    
+
+        <FaseComponent Fase="@AppState.SelectFase"/>
+
 </div>
 
 @code {
@@ -76,5 +76,18 @@
     {
 
         public static string Fase { get; set; } = ". . .";
+
+
     }
+
+    protected override void OnInitialized()
+    {
+        AppState.OnChange += StateHasChanged;
+    }
+
+    public void Dispose()
+    {
+        AppState.OnChange -= StateHasChanged;
+    }
+
 }

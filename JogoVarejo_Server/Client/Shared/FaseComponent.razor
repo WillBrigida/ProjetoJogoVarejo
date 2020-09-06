@@ -1,16 +1,14 @@
 ﻿@inject HttpClient Http
+@inject AppState AppState
 
 <div class="flex-column text-center" style="margin : 10px auto 50px; width: 100%; position: absolute; bottom: 0;">
     <h4><span class="badge badge-pill " style="background:#d7d7d7;">@Fase</span></h4>
 </div>
 
 @code {
-    [CascadingParameter] public string Fase { get; set; } = ". . .";
+    [Parameter] public string Fase { get; set; }
     [Parameter] public EventCallback<string> OnClick { get; set; }
 
-
-
-    string fase = ". . .";
 
     protected override async Task OnInitializedAsync()
     {
@@ -19,5 +17,5 @@
             Fase = $"Fase {respose.obj.Fase}";
         else
             Fase = $"Aguarde. . .";
-    }
+    }    
 }

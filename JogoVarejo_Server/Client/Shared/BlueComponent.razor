@@ -1,0 +1,14 @@
+﻿@inject AppState AppState
+
+<button @onclick="SelectColour">Select Blue</button>
+
+@code {
+
+    [Parameter]public string Fase { get; set; }
+
+    void SelectColour()
+    {
+        AppState.SetColour(Fase);
+    }
+
+}

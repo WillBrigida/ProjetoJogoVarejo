@@ -1,6 +1,9 @@
 ﻿@page "/controle"
 @inject NavigationManager Nav
 @inject HttpClient Http
+@inject AppState AppState
+
+
 <NavMenuConfiguracao />
 
 <div class="text-center" id="controles">
@@ -70,7 +73,10 @@
         {
             var result = await Http.PutJsonAsync<GenericResult<JogoVarejo_Server.Shared.Models.Controle>>("api/v1/controle/", controle);
             if (result.Sucesso)
+            {
+                AppState.SetFase($"Fase {controle.Fase.ToString()}");
                 MensagemSucesso = "Dado(s) alterado(s)!";
+            }
             else
                 MensagemErro = "Não foi possível atender sua requisição!. Tente novamente.";
         }
@@ -80,6 +86,7 @@
             if (result.Sucesso)
             {
                 MensagemSucesso = "Dado(s) salvo(s)!";
+                AppState.SetFase($"Fase {controle.Fase.ToString()}");
                 controle.ControleId = result.obj.ControleId;
             }
             else
@@ -89,6 +96,8 @@
 
     protected override async Task OnInitializedAsync()
     {
+        AppState.OnChange += StateHasChanged;
+
         await OnCarregarControles();
     }
 
@@ -112,5 +121,11 @@
                 Fase = 0
             };
         }
+
+    }
+
+    public void Dispose()
+    {
+        AppState.OnChange -= StateHasChanged;
     }
 }

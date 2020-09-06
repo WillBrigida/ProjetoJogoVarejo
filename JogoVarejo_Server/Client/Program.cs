@@ -2,6 +2,7 @@ using Blazored.LocalStorage;
 using EstudoIdentity.Client.Services.Auth;
 using JogoVarejo_Server.Client.Services;
 using JogoVarejo_Server.Client.Services.Auth;
+using JogoVarejo_Server.Client.Util;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.DependencyInjection;
@@ -22,6 +23,7 @@ namespace JogoVarejo_Server.Client
             builder.Services.AddAuthorizationCore();
             builder.Services.AddScoped<AuthenticationStateProvider, TokenAuthenticationStateProvider>();
             builder.Services.AddScoped<IAuthService, AuthService>();
+            builder.Services.AddSingleton<AppState>();
             builder.Services.AddBlazoredLocalStorage();
 
             await builder.Build().RunAsync();
