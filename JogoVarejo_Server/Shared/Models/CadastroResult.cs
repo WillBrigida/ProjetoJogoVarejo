@@ -4,5 +4,6 @@
     {
         public bool Sucesso { get; set; }
         public string Erro { get; set; }
+
     }
 }

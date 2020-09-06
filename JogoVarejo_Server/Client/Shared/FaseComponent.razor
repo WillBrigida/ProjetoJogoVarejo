@@ -12,10 +12,12 @@
 
     string fase = ". . .";
 
-    //protected override async Task OnInitializedAsync()
-    //{
-    //    var fase = await Http.GetJsonAsync<Controle>("api/v1/controle");
-    //    Fase = fase.Fase.ToString();
-    //}
-
+    protected override async Task OnInitializedAsync()
+    {
+        var respose = await Http.GetJsonAsync<GenericResult<JogoVarejo_Server.Shared.Models.Controle>>("api/v1/controle/");
+        if (respose.Sucesso)
+            Fase = $"Fase {respose.obj.Fase}";
+        else
+            Fase = $"Aguarde. . .";
+    }
 }

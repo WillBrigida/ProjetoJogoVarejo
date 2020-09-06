@@ -19,14 +19,27 @@
 
             <div class="form-group">
                 <label for="grupo">Fase: *</label>
-                <InputNumber Id="nome" class="form-control" @bind-Value="controle.Fase" />
-                <ValidationMessage For="@(() => controle.Fase)" />
+
+                <select @bind="controle.Fase" class="form-control">
+                    @foreach (var item in Fases)
+                    {
+                        <option value="@item">
+                            @item
+                        </option>
+                    }
+                </select>
             </div>
 
             <div class="form-group">
                 <label for="grupo">Duração: *</label>
-                <InputNumber type="password" Id="nome" class="form-control" @bind-Value="controle.Duracao" />
-                <ValidationMessage For="@(() => controle.Duracao)" />
+                <select @bind="@controle.Duracao" class="form-control">
+                    @foreach (var item in Dias)
+                    {
+                        <option value="@item">
+                            @item
+                        </option>
+                    }
+                </select>
             </div>
             <br />
             <span aria-hidden="true">
@@ -37,7 +50,9 @@
 </div>
 
 @code{
-    public int MyProperty { get; set; }
+    public string[] Fases { get; set; } = new string[] { "-Selecione-", "1", "2", "3" };
+    public string[] Dias { get; set; } = new string[] { "-Selecione-", "10", "20", "30", "40" };
+
     public string MensagemErro { get; set; }
     public string MensagemSucesso { get; set; }
     public bool IsBusy { get; set; }
@@ -48,14 +63,54 @@
 
     protected async Task OnSalvar()
     {
-       await Http.PostJsonAsync("api/v1/controle/con", controle);
+        MensagemSucesso = "";
+        MensagemErro = "";
 
-        //JogoVarejo_Server.Client.Shared.NavMenu.MenuFases.Fase = controle.Fase.ToString();
+        if (controle.ControleId != 0)
+        {
+            var result = await Http.PutJsonAsync<GenericResult<JogoVarejo_Server.Shared.Models.Controle>>("api/v1/controle/", controle);
+            if (result.Sucesso)
+                MensagemSucesso = "Dado(s) alterado(s)!";
+            else
+                MensagemErro = "Não foi possível atender sua requisição!. Tente novamente.";
+        }
+        else
+        {
+            var result = await Http.PostJsonAsync<GenericResult<JogoVarejo_Server.Shared.Models.Controle>>("api/v1/controle/", controle);
+            if (result.Sucesso)
+            {
+                MensagemSucesso = "Dado(s) salvo(s)!";
+                controle.ControleId = result.obj.ControleId;
+            }
+            else
+                MensagemErro = "Não foi possível atender sua requisição!. Tente novamente.";
+        }
     }
 
     protected override async Task OnInitializedAsync()
     {
-        controle = await Http.GetJsonAsync<JogoVarejo_Server.Shared.Models.Controle>("api/v1/controle/con");
-        //var users = await Http.GetJsonAsync<List<Usuario>>("api/v1/controle/get");
+        await OnCarregarControles();
+    }
+
+    protected async Task OnCarregarControles()
+    {
+        MensagemSucesso = "";
+        MensagemErro = "";
+
+        var respose = await Http.GetJsonAsync<GenericResult<JogoVarejo_Server.Shared.Models.Controle>>("api/v1/controle/");
+        if (respose.Sucesso)
+        {
+            controle = respose.obj;
+        }
+        else
+        {
+            MensagemErro = respose.Erro;
+            controle = new JogoVarejo_Server.Shared.Models.Controle
+            {
+                Duracao = 0,
+                ControleId = 0,
+                Fase = 0
+            };
+        }
     }
 }
