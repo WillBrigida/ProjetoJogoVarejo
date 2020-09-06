@@ -4,14 +4,16 @@ using JogoVarejo_Server.Server.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace JogoVarejo_Server.Server.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200906070038_GrupoRelacionamento")]
+    partial class GrupoRelacionamento
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -82,9 +84,6 @@ namespace JogoVarejo_Server.Server.Migrations
                     b.Property<string>("Senha")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("TesteId")
-                        .HasColumnType("int");
-
                     b.Property<int>("TipoUsuarioId")
                         .HasColumnType("int");
 
@@ -106,8 +105,6 @@ namespace JogoVarejo_Server.Server.Migrations
                         .IsUnique()
                         .HasDatabaseName("UserNameIndex")
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
-
-                    b.HasIndex("TesteId");
 
                     b.ToTable("AspNetUsers");
                 });
@@ -140,9 +137,6 @@ namespace JogoVarejo_Server.Server.Migrations
                     b.Property<int>("GrupoOperadorId")
                         .HasColumnType("int");
 
-                    b.Property<int>("GrupoUsuarioId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Quando")
                         .HasColumnType("nvarchar(max)");
 
@@ -152,30 +146,6 @@ namespace JogoVarejo_Server.Server.Migrations
                     b.HasKey("GrupoId");
 
                     b.ToTable("T_grupo");
-                });
-
-            modelBuilder.Entity("JogoVarejo_Server.Shared.Models.Teste", b =>
-                {
-                    b.Property<int>("TesteId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .UseIdentityColumn();
-
-                    b.Property<int>("GrupoOperadorId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("GrupoUsuarioId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Quando")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Quanto")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("TesteId");
-
-                    b.ToTable("T_teste");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -314,10 +284,6 @@ namespace JogoVarejo_Server.Server.Migrations
                     b.HasOne("JogoVarejo_Server.Shared.Models.Grupo", "Grupo")
                         .WithMany()
                         .HasForeignKey("GrupoId");
-
-                    b.HasOne("JogoVarejo_Server.Shared.Models.Teste", "Teste")
-                        .WithMany()
-                        .HasForeignKey("TesteId");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

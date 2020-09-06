@@ -1,6 +1,8 @@
-﻿using JogoVarejo_Server.Server.Utils;
+﻿using JogoVarejo_Server.Server.Data;
+using JogoVarejo_Server.Server.Utils;
 using JogoVarejo_Server.Shared.Models;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -19,21 +21,28 @@ namespace JogoVarejo_Server.Server.Controller
     [Route("api/v1/[controller]")]
     public class AcessoController : ControllerBase
     {
+        readonly AppDbContext _db;
         readonly SignInManager<ApplicationUser> _signInManager;
         readonly UserManager<ApplicationUser> _userManager;
         readonly AppSettings _appSettings;
 
 
         public AcessoController(
+                                AppDbContext db,
                                 SignInManager<ApplicationUser> signInManager,
                                 UserManager<ApplicationUser> userManager,
                                 IOptions<AppSettings> appSettings)
+
         {
+            _db = db;
             _signInManager = signInManager;
             _userManager = userManager;
             _appSettings = appSettings.Value;
+
+
         }
 
+        
 
 
         //[HttpGet("modelo")]
@@ -50,7 +59,9 @@ namespace JogoVarejo_Server.Server.Controller
         [HttpGet("usuarios")]
         public async Task<ActionResult<List<Usuario>>> Login()
         {
-            var usuario = await _userManager.Users.Where(u => u.TipoUsuarioId == 2).ToListAsync();
+            var usuario = await _userManager.Users
+                .Include(g => g.Grupo)
+                .Where(u => u.TipoUsuarioId == 2).ToListAsync();
 
             var listUsuario = new List<Usuario>();
             foreach (var item in usuario)
@@ -61,7 +72,8 @@ namespace JogoVarejo_Server.Server.Controller
                     Nome = item.Nome,
                     Login = item.Login,
                     TipoUsuarioId = item.TipoUsuarioId,
-                    Senha = item.Senha
+                    Senha = item.Senha,
+                    Grupo = item.Grupo
                 });
             }
             return listUsuario;
@@ -71,9 +83,12 @@ namespace JogoVarejo_Server.Server.Controller
 
         public async Task<ActionResult> Delete([FromBody] Usuario usuario)
         {
-            var user = await _userManager.Users.Where(x => x.GrupoUsuarioId == usuario.GrupoUsuarioId).FirstOrDefaultAsync();
-            await _userManager.DeleteAsync(user);
+            var user = await _userManager
+                .Users
+                .Include(g => g.Grupo)
+                .SingleAsync(x => x.GrupoUsuarioId == usuario.GrupoUsuarioId);
 
+            await _userManager.DeleteAsync(user);
             return Ok();
         }
 
@@ -89,7 +104,13 @@ namespace JogoVarejo_Server.Server.Controller
                 Email = usuario.Login,
                 Senha = usuario.Senha,
                 GrupoUsuarioId = usuario.GrupoUsuarioId,
-                TipoUsuarioId = usuario.TipoUsuarioId
+                TipoUsuarioId = usuario.TipoUsuarioId,
+               
+                Grupo = new Grupo
+                {
+                    GrupoUsuarioId = usuario.GrupoUsuarioId,
+                    GrupoOperadorId = 0,
+                }
             };
 
             var result = await _userManager.CreateAsync(user, usuario.Senha);
@@ -104,10 +125,63 @@ namespace JogoVarejo_Server.Server.Controller
             return Ok(new CadastroResult { Sucesso = true });
         }
 
+        [HttpPut]
+        public async Task<ActionResult<Usuario>> Put(Usuario usuario)
+        {
+            var user = await _userManager.Users
+                .Include(g => g.Grupo)
+                .SingleAsync(x => x.GrupoUsuarioId == usuario.GrupoUsuarioId);
+
+            user.Grupo.GrupoOperadorId = usuario.Grupo.GrupoOperadorId;
+
+            //var user = new ApplicationUser
+            //{
+            //    Nome = usuario.Nome,
+            //    Login = usuario.Login,
+            //    UserName = usuario.Login,
+            //    Email = usuario.Login,
+            //    Senha = usuario.Senha,
+            //    GrupoUsuarioId = usuario.GrupoUsuarioId,
+            //    TipoUsuarioId = usuario.TipoUsuarioId,
+            //    Grupo = new Grupo
+            //    {
+            //        GrupoId = usuario.Grupo.GrupoId,
+            //        GrupoUsuarioId = usuario.GrupoUsuarioId,
+            //        GrupoOperadorId = usuario.Grupo.GrupoOperadorId,
+            //        Quando = usuario.Grupo.Quando,
+            //        Quanto = usuario.Grupo.Quanto
+            //    }
+            //};
+
+
+            try
+            {
+
+
+                _db.Entry(user).State = EntityState.Modified;
+                var result = await _userManager.UpdateAsync(user);
+
+
+                //var userStore = new UserStore<ApplicationUser>(_db);
+                //var b = new UserManager(userStore)
+                //await userStore.UpdateAsync(user);
+                //await _db.SaveChangesAsync();
+
+                //IdentityResult result = await UserManager.UpdateAsync(user);
+
+                return Ok(new LoginResult { Sucesso = true });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new LoginResult { Sucesso = false, Mensagem = ex.Message });
+            }
+            
+        }
 
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] Usuario usuario)
         {
+
             var result = new LoginResult();
             try
             {
@@ -170,5 +244,7 @@ namespace JogoVarejo_Server.Server.Controller
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
+
+
     }
 }

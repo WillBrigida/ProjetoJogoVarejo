@@ -50,6 +50,7 @@ namespace JogoVarejo_Server.Server
                 options.Password.RequireUppercase = false;
                 options.Password.RequiredLength = 3;
                 options.Password.RequiredUniqueChars = 1;
+
             });
 
             services.AddDbContext<Data.AppDbContext>(options => options

@@ -14,5 +14,6 @@ namespace JogoVarejo_Server.Shared.Models
         public string Nome { get; set; }
         public string Login { get; set; }
         public string Senha { get; set; }
+        public Grupo Grupo { get; set; }
     }
 }

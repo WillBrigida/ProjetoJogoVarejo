@@ -54,7 +54,6 @@ namespace JogoVarejo_Server.Server.Utils
                 await userStore.AddToRoleAsync(user, "Professor");
             }
 
-            await Task.Delay(3000);
             await _context.SaveChangesAsync();
         }
     }

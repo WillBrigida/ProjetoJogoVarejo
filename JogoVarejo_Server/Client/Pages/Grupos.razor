@@ -43,7 +43,6 @@
                                     <button class="btn btn-link" style="color:cornflowerblue;" @onclick="@(()=> OnDetalheGrupo(item.GrupoId))"><i class="far fa-edit"></i></button>
                                     <button class="btn btn btn-link" style="color:mediumseagreen;" @onclick="@(()=> OnHistorico())"><i class="fas fa-history"></i></button>
                                     <button class="btn btn btn-link" style="color:darkorange;" @onclick="@(()=> OnIndicadores())"><i class="fas fa-align-center"></i></button>
-
                                 </td>
 
                             </tr>
@@ -178,9 +177,9 @@
         await Task.Run(() => modalIndicadores.Ocultar());
     }
 
-    protected async Task OnDetalheGrupo(int id)
+    protected async Task OnDetalheGrupo(int? id)
     {
-        Grupo = await Mock.ListaGrupo(id);
+        //Grupo = await Mock.ListaGrupo(id);
         await Task.Run(() => modalGerente.Exibir());
     }
 

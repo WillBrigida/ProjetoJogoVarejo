@@ -10,6 +10,9 @@
             <br />
         </div>
 
+        <h6 class="text-center" style="color:mediumseagreen;">@MensagemSucesso</h6>
+        <h6 class="text-center" style="color:tomato">@MensagemErro</h6>
+
         @if (grupos == null)
         {
             <p><em>Loading...</em></p>
@@ -17,13 +20,14 @@
         else
         {
             <div id="card-grupo-controles">
-                <table class="table table-striped" >
+                <table class="table table-striped">
                     <thead class="cor-site" style="color:#d7d7d7">
                         <tr>
                             <th>Id</th>
                             <th>Nome</th>
                             <th>Grupo Operador</th>
                             <th>Senha</th>
+                            <th></th>
                             <th></th>
 
                         </tr>
@@ -32,16 +36,16 @@
                         @foreach (var item in usuarios)
                         {
                         <tr>
-                            <td >
+                            <td>
                                 @item.GrupoUsuarioId
                             </td>
-                            <td width="150px">
+                            <td width="100px">
                                 @item.Nome
                             </td>
 
                             <td>
                                 <EditForm Model="usuarios">
-                                    <InputText Id="GrupoOperadorId" class="form-control" @bind-Value="item.Login" />
+                                    <InputNumber Id="usuarios" class="form-control" @bind-Value="item.Grupo.GrupoOperadorId" />
                                 </EditForm>
                             </td>
 
@@ -49,13 +53,21 @@
                                 @item.Senha
                             </td>
 
-                            <td>
-                                <button class="btn btn-link" style="color:cornflowerblue;" @onclick="@(()=> OnDetalheGrupo(item))"><i class="far fa-trash-alt" style="color:tomato"></i></button>
+                            <td width="60">
+                                <button class="btn btn-link" style="color:cornflowerblue;" @onclick="@(()=> OnDelete(item))"><i class="far fa-trash-alt" style="color:tomato"></i></button>
                             </td>
+
+                            <td width="60">
+                                <button class="btn btn-link" style="color:mediumseagreen;" @onclick="@(()=> OnSalvar(item))"><i class="far fa-save" style="color:mediumseagreen"></i></button>
+                            </td>
+
+
+
                         </tr>
                         }
                     </tbody>
                 </table>
+                @*<button type="button" class="btn btn-primary" @onclick="@OnSalvar">Salvar</button>*@
 
             </div>
         }
@@ -71,6 +83,9 @@
     private List<Usuario> usuarios = new List<Usuario>();
     public Grupo Grupo { get; set; } = new Grupo();
 
+    public string MensagemErro { get; set; }
+    public string MensagemSucesso { get; set; }
+
     protected override async Task OnInitializedAsync()
     {
         await CarregarItens();
@@ -78,13 +93,26 @@
 
     async Task CarregarItens()
     {
-        var users = await Http.GetJsonAsync<List<Usuario>>("api/v1/acesso/usuarios");
+        var users = await Http.GetJsonAsync<List<Usuario>>("api/v1/acesso/usuarios/");
         usuarios = users.OrderBy(x => x.GrupoUsuarioId).ToList();
     }
 
-    async Task  OnDetalheGrupo(Usuario usuario)
+    async Task OnDelete(Usuario usuario)
     {
         await Http.PostJsonAsync("api/v1/acesso/deletar", usuario);
+        await Http.PostJsonAsync("api/v1/grupo/deletar", usuario.Grupo);
+
         await CarregarItens();
+    }
+
+    async Task OnSalvar(Usuario usr)
+    {
+        var result = await Http.PutJsonAsync<LoginResult>("api/v1/acesso/", usr);
+        if (result.Sucesso)
+        {
+            MensagemSucesso = "Dado(s) alterado(s)!";
+        }
+        else
+            MensagemErro = "Não foi possível atender sua requisição!. Tente novamente.";
     }
 }

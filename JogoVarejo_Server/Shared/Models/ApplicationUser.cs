@@ -11,5 +11,7 @@ namespace JogoVarejo_Server.Shared.Models
         public string Login { get; set; }
         public string Senha { get; set; }
         public DateTime DataCriacao { get; set; } = DateTime.Now;
+        public virtual Grupo Grupo { get; set; }
+
     }
 }
