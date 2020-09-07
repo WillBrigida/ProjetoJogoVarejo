@@ -154,6 +154,9 @@
         if (result.Sucesso)
         {
             AppState.SetFase("Aguarde. . .");
+            controle.Duracao = 0;
+            controle.Fase = 0;
+
             MensagemSucesso = "Jogo encerrado com sucesso!";
         }
         else

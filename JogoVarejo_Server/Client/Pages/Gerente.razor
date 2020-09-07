@@ -1,6 +1,7 @@
 ﻿@page "/gerente"
 @inject NavigationManager Nav
 @inject HttpClient Http
+@inject IAuthorizationService AuthorizationService
 
 
 
@@ -9,7 +10,7 @@
     <Authorized Context="Auth">
 
         <GerenteComponente Grupo="@Grupo"
-                           GrupoOperadorGerente="Grupo Gerente"
+                           GrupoOperadorGerente="Grupo Operador"
                            TextoBotao1="@textoBotao1"
                            Disabled="@disabled"
                            Display="@display"
@@ -70,11 +71,22 @@
     private bool disabled = true;
     private string display = "";
 
+    [CascadingParameter]
+    protected Task<AuthenticationState> authenticationStateTask { get; set; }
+
     int fase;
 
     protected override async Task OnInitializedAsync()
     {
-        Grupo = await Mock.ListaGrupo(3);
+        //Grupo = await Mock.ListaGrupo(3);
+
+
+        ClaimsPrincipal user = (await authenticationStateTask).User;
+        var userId =  (user.Identity as ClaimsIdentity).FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+        Console.WriteLine(userId);
+
+        Grupo = await Http.GetJsonAsync<JogoVarejo_Server.Shared.Models.Grupo>($"api/v1/grupo/gerente/{Guid.Parse(userId)}");
 
         var respose = await Http.GetJsonAsync<GenericResult<JogoVarejo_Server.Shared.Models.Controle>>("api/v1/controle/");
         if (respose.Sucesso)
@@ -92,7 +104,7 @@
 
         if (fase < 1)
         {
-            MensagemErro = "O Jogo ainda não começou! Aguarde o indicação do professor.";
+            MensagemErro = "O Jogo ainda não começou! Aguarde a indicação do professor.";
             return;
         }
 
@@ -159,5 +171,7 @@
     protected async Task OnSalvar()
     {
         MensagemSucesso = "Salvo com sucesso!";
+
+        var result = await Http.PutJsonAsync<GenericResult<JogoVarejo_Server.Shared.Models.Grupo>>($"api/v1/grupo", Grupo);
     }
 }

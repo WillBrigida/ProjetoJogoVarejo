@@ -1,9 +1,13 @@
 ﻿@page "/operador"
 @inject NavigationManager Nav
+@inject HttpClient Http
+@inject IAuthorizationService AuthorizationService
+
 
 <GerenteComponente Grupo="@Grupo"
                    Display="none"
                    TextoBotao1="Decidir"
+                   GrupoOperadorGerente="Gerente"
                    Titulo="Operador"
                    Disabled="true"
                    OnAction2="@(()=> OnHistorico())"
@@ -102,15 +106,39 @@
     protected Modal modalHistorico;
     protected Modal modalIndicadores;
     protected Modal modalIncluirMovimento;
+    [CascadingParameter]
+    protected Task<AuthenticationState> authenticationStateTask { get; set; }
+    int fase;
 
     protected override async Task OnInitializedAsync()
     {
+        ClaimsPrincipal user = (await authenticationStateTask).User;
+        var userId = (user.Identity as ClaimsIdentity).FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+        Console.WriteLine(userId);
+
+        Grupo = await Http.GetJsonAsync<JogoVarejo_Server.Shared.Models.Grupo>($"api/v1/grupo/operador/{Guid.Parse(userId)}");
+
+        var respose = await Http.GetJsonAsync<GenericResult<JogoVarejo_Server.Shared.Models.Controle>>("api/v1/controle/");
+        if (respose.Sucesso)
+        {
+            fase = respose.obj.Fase;
+        }
+
         Movimento = await Mock.ListaMovimentos(1);
-        Grupo = await Mock.ListaGrupo(3);
+        //Grupo = await Mock.ListaGrupo(3);
     }
 
     protected async Task OnDecidir()
     {
+        MensagemSucesso = "";
+        MensagemSucesso = "";
+
+        if (fase != 2)
+        {
+            MensagemErro = "Opção indisponível nessa fase!";
+            return;
+        }
         Console.WriteLine(" => Decidir");
         await Task.Run(() => modalHistorico.Exibir());
         //MensagemSucesso = "Os campos foram salvos com sucesso!";

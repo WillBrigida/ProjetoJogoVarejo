@@ -134,26 +134,6 @@ namespace JogoVarejo_Server.Server.Controller
 
             user.Grupo.GrupoOperadorId = usuario.Grupo.GrupoOperadorId;
 
-            //var user = new ApplicationUser
-            //{
-            //    Nome = usuario.Nome,
-            //    Login = usuario.Login,
-            //    UserName = usuario.Login,
-            //    Email = usuario.Login,
-            //    Senha = usuario.Senha,
-            //    GrupoUsuarioId = usuario.GrupoUsuarioId,
-            //    TipoUsuarioId = usuario.TipoUsuarioId,
-            //    Grupo = new Grupo
-            //    {
-            //        GrupoId = usuario.Grupo.GrupoId,
-            //        GrupoUsuarioId = usuario.GrupoUsuarioId,
-            //        GrupoOperadorId = usuario.Grupo.GrupoOperadorId,
-            //        Quando = usuario.Grupo.Quando,
-            //        Quanto = usuario.Grupo.Quanto
-            //    }
-            //};
-
-
             try
             {
 
@@ -161,13 +141,6 @@ namespace JogoVarejo_Server.Server.Controller
                 _db.Entry(user).State = EntityState.Modified;
                 var result = await _userManager.UpdateAsync(user);
 
-
-                //var userStore = new UserStore<ApplicationUser>(_db);
-                //var b = new UserManager(userStore)
-                //await userStore.UpdateAsync(user);
-                //await _db.SaveChangesAsync();
-
-                //IdentityResult result = await UserManager.UpdateAsync(user);
 
                 return Ok(new LoginResult { Sucesso = true });
             }
@@ -227,6 +200,7 @@ namespace JogoVarejo_Server.Server.Controller
 
             claims.Add(new Claim(ClaimTypes.Name, user.UserName));
             claims.Add(new Claim(ClaimTypes.Email, user.UserName));
+            claims.Add(new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()));
 
             foreach (var role in roles)
                 claims.Add(new Claim(ClaimTypes.Role, role));
