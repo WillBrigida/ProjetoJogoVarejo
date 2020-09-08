@@ -1,7 +1,10 @@
-﻿using JogoVarejo_Server.Server.Data;
+﻿using JogoVarejo.Data;
+using JogoVarejo.Shared.Models;
 using JogoVarejo_Server.Shared.Models;
+using JogoVarejo_Server.Shared.Models.Utils;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -20,26 +23,52 @@ namespace JogoVarejo.Server.Controllers
         [HttpGet(Name = "GetControle")]
         public async Task<ActionResult<Controle>> Get()
         {
-            var result = await _context.T_controle.FirstOrDefaultAsync();
-            if (result == null)
-                return Ok(new GenericResult<Controle> {Sucesso = false, Erro = "Não há regstro(s)" });
-            return Ok(new GenericResult<Controle> { Sucesso = true , obj = result});
+            try
+            {
+                var controle = await _context.T_controle.FirstOrDefaultAsync();
+                if (controle == null)
+                    return Ok(new GenericResult<Controle> { Sucesso = false, MensagemErro = "Não há registros no Banco de dados" });
+                return Ok(new GenericResult<Controle> { Sucesso = true, Item = controle });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return BadRequest(new GenericResult<Controle> { Sucesso = false, MensagemErro = "Não foi possível atender essa requisição. Tente novamente." });
+            }
         }
+
 
         [HttpPost]
         public async Task<ActionResult> Post([FromBody] Controle controle)
         {
-            _context.Add(controle);
-            await _context.SaveChangesAsync();
-            return new CreatedResult("GetControle", new GenericResult<Controle> {Sucesso = true, obj = controle});
+            try
+            {
+                await _context.AddAsync(controle);
+                await _context.SaveChangesAsync();
+                return new CreatedResult("GetControle", new GenericResult<Controle> { Sucesso = true, Item = controle });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return BadRequest(new GenericResult<Controle> { Sucesso = false, MensagemErro = "Não foi possível atender essa requisição. Tente novamente." });
+            }
         }
 
         [HttpPut]
         public async Task<ActionResult<Controle>> Put([FromBody] Controle controle)
         {
-            _context.Entry(controle).State = EntityState.Modified;
-            await _context.SaveChangesAsync();
-            return Ok(new GenericResult<Controle> { Sucesso = true });
+            try
+            {
+                _context.Entry(controle).State = EntityState.Modified;
+                await _context.SaveChangesAsync();
+                return Ok(new GenericResult<Controle> { Sucesso = true });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return BadRequest(new GenericResult<Controle> { Sucesso = false, MensagemErro = "Não foi possível atender essa requisição. Tente novamente." });
+            }
+
         }
     }
 }

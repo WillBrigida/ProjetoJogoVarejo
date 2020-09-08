@@ -43,7 +43,7 @@ namespace JogoVarejo.Server.Controller
 
 
         [HttpGet("usuarios")]
-        public async Task<ActionResult<List<ApplicationUser>>> Login()
+        public async Task<ActionResult<IEnumerable<ApplicationUser>>> Login()
         {
             try
             {

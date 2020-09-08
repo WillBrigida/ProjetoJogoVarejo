@@ -1,8 +1,7 @@
-﻿using JogoVarejo_Server.Server.Data;
-using JogoVarejo_Server.Server.Migrations;
-using JogoVarejo_Server.Shared.Models;
+﻿using JogoVarejo.Data;
+using JogoVarejo.Shared.Models;
+using JogoVarejo_Server.Shared.Models.Utils;
 using Microsoft.AspNetCore.Mvc;
-using JogoVarejo_Server.Shared.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -22,14 +21,26 @@ namespace JogoVarejo.Server.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<Usuario>>> Get()
+        public async Task<ActionResult<IEnumerable<Grupo>>> Get()
         {
-            var list = await _context.T_grupo.AsNoTracking().ToListAsync();
-            return Ok(list);
+            try
+            {
+                var grupos = await _context.T_grupo.AsNoTracking().ToListAsync();
+
+                if (!grupos.Any())
+                    return Ok(new GenericResult<Grupo> { Sucesso = false, MensagemErro = "Não há registros no Banco de dados" });
+                else
+                    return Ok(new GenericResult<Grupo> { Sucesso = true, Items = grupos });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return BadRequest(new GenericResult<ApplicationUser> { Sucesso = false, MensagemErro = "Não foi possível atender essa requisição. Tente novamente." });
+            }
         }
 
         [HttpGet("gerente/{userId}")]
-        public async Task<ActionResult<List<Usuario>>> GetUsuario(Guid userId)
+        public async Task<ActionResult<IEnumerable<Grupo>>> GetUsuario(Guid userId)
         {
             var user = await _context.Users.Include(x => x.Grupo)
                 .SingleAsync(x => x.Id == userId.ToString());
@@ -39,44 +50,72 @@ namespace JogoVarejo.Server.Controllers
         }
 
         [HttpGet("operador/{userId}")]
-        public async Task<ActionResult<List<Usuario>>> GetOperador(Guid userId, int id = 0)
+        public async Task<ActionResult<Grupo>> GetOperador(Guid userId)
         {
-            var user = await _context.Users.Include(x => x.Grupo)
-                .SingleAsync(x => x.Id == userId.ToString());
-
-            var itm = await _context.T_grupo
-               .Where(x => x.GrupoOperadorId == user.Grupo.GrupoUsuarioId).FirstOrDefaultAsync();
-
-            var grupo = new JogoVarejo_Server.Shared.Models.Grupo
+            try
             {
-                GrupoId = itm.GrupoId,
-                GrupoOperadorId = itm.GrupoUsuarioId,
-                GrupoUsuarioId = itm.GrupoOperadorId,
-                Quando = itm.Quando,
-                Quanto = itm.Quanto
-            };
+                var user = await _context.Users.Include(x => x.Grupo)
+               .SingleAsync(x => x.Id == userId.ToString());
 
-            return Ok(grupo);
+                var grupo = await _context.T_grupo
+                   .Where(x => x.OperadorId == user.Grupo.GrupoUsuarioId).FirstOrDefaultAsync();
+
+                if (grupo == null)
+                    return Ok(new GenericResult<Grupo> { Sucesso = false, MensagemErro = "Não há registros no Banco de dados" });
+
+                var newGrupo = new Grupo
+                {
+                    GrupoId = grupo.GrupoId,
+                    OperadorId = grupo.GrupoUsuarioId,
+                    GrupoUsuarioId = grupo.OperadorId,
+                    Quando = grupo.Quando,
+                    Quanto = grupo.Quanto
+                };
+
+                return Ok(new GenericResult<Grupo> { Sucesso = true, Item = newGrupo });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return BadRequest(new GenericResult<Grupo> { Sucesso = false, MensagemErro = "Não foi possível atender essa requisição. Tente novamente." });
+            }
         }
 
 
         [HttpPost("deletar")]
-        public async Task<ActionResult> Delete([FromBody] JogoVarejo_Server.Shared.Models.Grupo grupo)
+        public async Task<ActionResult> Delete([FromBody] Grupo grupo)
         {
-            var grp = await _context.T_grupo
-                .FirstOrDefaultAsync(x => x.GrupoId == grupo.GrupoId);
+            try
+            {
+                var grp = await _context.T_grupo
+               .FirstOrDefaultAsync(x => x.GrupoId == grupo.GrupoId);
 
-            _context.Remove(grp);
-            await _context.SaveChangesAsync();
-            return Ok(new GenericResult<JogoVarejo_Server.Shared.Models.Grupo> { Sucesso = true, obj = grp });
+                _context.Remove(grp);
+                await _context.SaveChangesAsync();
+                return Ok(new GenericResult<Grupo> { Sucesso = true });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return BadRequest(new GenericResult<Grupo> { Sucesso = false, MensagemErro = "Não foi possível atender essa requisição. Tente novamente." });
+            }
         }
 
+
         [HttpPut]
-        public async Task<ActionResult<JogoVarejo_Server.Shared.Models.Grupo>> Put([FromBody] JogoVarejo_Server.Shared.Models.Grupo grupo)
+        public async Task<ActionResult<Grupo>> Put([FromBody] Grupo grupo)
         {
-            _context.Entry(grupo).State = EntityState.Modified;
-            await _context.SaveChangesAsync();
-            return Ok(new GenericResult<JogoVarejo_Server.Shared.Models.Grupo> { Sucesso = true });
+            try
+            {
+                _context.Entry(grupo).State = EntityState.Modified;
+                await _context.SaveChangesAsync();
+                return Ok(new GenericResult<Grupo> { Sucesso = true });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return BadRequest(new GenericResult<Grupo> { Sucesso = false, MensagemErro = "Não foi possível atender essa requisição. Tente novamente." });
+            }
         }
     }
 }
