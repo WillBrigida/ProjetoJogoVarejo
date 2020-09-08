@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace JogoVarejo_Server.Shared.Models.Utils
+namespace JogoVarejo.Shared.Models.Utils
 {
     public class GenericResult<T>
     {

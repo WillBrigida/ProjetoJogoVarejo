@@ -1,7 +1,7 @@
 
 using System.ComponentModel.DataAnnotations;
 
-namespace JogoVarejo.Shared.Models
+namespace JogoVarejo.Models
 {
     public class Grupo
     {

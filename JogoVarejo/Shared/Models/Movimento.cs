@@ -1,4 +1,4 @@
-﻿namespace JogoVarejo_Server.Shared.Models
+﻿namespace JogoVarejo.Shared.Models
 {
     public class Movimento
     {

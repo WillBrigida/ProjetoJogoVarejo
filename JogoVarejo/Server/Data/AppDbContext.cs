@@ -1,5 +1,5 @@
-﻿using JogoVarejo.Shared.Models;
-using JogoVarejo_Server.Shared.Models;
+﻿using JogoVarejo.Models;
+using JogoVarejo.Shared.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 

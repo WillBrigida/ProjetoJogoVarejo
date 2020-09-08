@@ -1,6 +1,7 @@
 ﻿using JogoVarejo.Data;
+using JogoVarejo.Models;
 using JogoVarejo.Shared.Models;
-using JogoVarejo_Server.Shared.Models.Utils;
+using JogoVarejo.Shared.Models.Utils;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
