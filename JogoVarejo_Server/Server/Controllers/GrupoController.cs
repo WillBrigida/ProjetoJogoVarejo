@@ -19,12 +19,22 @@ namespace JogoVarejo_Server.Server.Controllers
             _context = context;
         }
 
-        //[HttpGet]
-        //public async Task<ActionResult<List<Usuario>>> Get()
-        //{
-        //    var list = await _context.Grupos.AsNoTracking().ToListAsync();
-        //    return Ok(list);
-        //}
+        [HttpGet]
+        public async Task<ActionResult<List<Grupo>>> Get()
+        {
+            try
+            {
+                var grupos = await _context.Grupos.AsNoTracking().ToListAsync();
+                if (grupos == null)
+                    return Ok(new GenericResult<Grupo> { Sucesso = false, Mensagem = "Não há registro(s)!" });
+                return Ok(new GenericResult<Grupo> { Sucesso = true, Items = grupos });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return BadRequest(new GenericResult<Grupo> { Sucesso = false, Mensagem = "Não foi possível atender essa solicitação. Tente novamente." });
+            }
+        }
 
         //[HttpGet("gerente/{userId}")]
         //public async Task<ActionResult<List<Usuario>>> GetUsuario(Guid userId)
@@ -69,12 +79,21 @@ namespace JogoVarejo_Server.Server.Controllers
         //    return Ok(new GenericResult<JogoVarejo_Server.Shared.Models.Grupos> { Sucesso = true, obj = grp });
         //}
 
-        //[HttpPut]
-        //public async Task<ActionResult<JogoVarejo_Server.Shared.Models.Grupos>> Put([FromBody] JogoVarejo_Server.Shared.Models.Grupos grupos)
-        //{
-        //    _context.Entry(grupos).State = EntityState.Modified;
-        //    await _context.SaveChangesAsync();
-        //    return Ok(new GenericResult<JogoVarejo_Server.Shared.Models.Grupos> { Sucesso = true });
-        //}
+        [HttpPut]
+        public async Task<ActionResult> Put([FromBody] Grupo grupos)
+        {
+            try
+            {
+                _context.Entry(grupos).State = EntityState.Modified;
+                await _context.SaveChangesAsync();
+                return Ok(new GenericResult<Grupo> { Sucesso = true });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return BadRequest(new GenericResult<Grupo> { Sucesso = false, Mensagem = "Não foi possível atender essa solicitação. Tente novamente." });
+            }
+
+        }
     }
 }

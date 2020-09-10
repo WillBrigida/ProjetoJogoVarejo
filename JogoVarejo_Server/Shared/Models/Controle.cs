@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 #nullable disable
 
@@ -7,6 +8,8 @@ namespace JogoVarejo_Server.Shared.Models
 {
     public partial class Controle
     {
+        [Key]
+        public int ControleId { get; set; }
         public int Fase { get; set; }
         public int Duracao { get; set; }
         public decimal PrecoCompra { get; set; }

@@ -35,7 +35,7 @@
                         @foreach (var item in grupos)
                         {
                         <tr>
-                            <td width="200">@item.GrupoId</td>
+                            <td width="200">Grupo @item.GrupoId</td>
 
                             <td width="250">
                                 <EditForm Model="grupos">
@@ -48,8 +48,17 @@
                                     <InputText Id="grupos" class="form-control" @bind-Value="item.Quanto" disabled />
                                 </EditForm>
                             </td>
-                          
-                            <td width="200">@item.GrupoOperador</td>
+
+                            <td width="250">
+                                <EditForm Model="grupos">
+                                    <InputNumber Id="grupos" class="form-control" @bind-Value="item.GrupoOperador" >Teste</InputNumber>
+                                </EditForm>
+                            </td>
+
+                            <td class="text-left" width="100">
+                                <button class="btn btn-link" @onclick="() => OnSalvar(item)">Salvar</button>
+                            </td>
+
                             <td width="250" class="text-center">
                                 <button class="btn btn-link" style="color:cornflowerblue;" @onclick="@(()=> OnDetalheGrupo(item))"><i class="far fa-edit"></i></button>
                                 <button class="btn btn btn-link" style="color:mediumseagreen;" @onclick="@(()=> OnHistorico())"><i class="fas fa-history"></i></button>
@@ -141,8 +150,13 @@
     {
         MensagemSucesso = "";
 
-        grupos = await Http.GetJsonAsync<List<JogoVarejo_Server.Shared.Models.Grupo>>("api/v1/grupo/");
+        var response = await Http.GetJsonAsync<GenericResult<Grupo>>("api/v1/grupo");
+        if (!response.Sucesso)
+            MensagemErro = response.Mensagem;
+
+        grupos = response.Items;
     }
+
 
     protected void OnEditarSalvar()
     {
@@ -212,7 +226,19 @@
     {
         MensagemSucesso = "Salvo com sucesso!";
 
-        var result = await Http.PutJsonAsync<GenericResult<JogoVarejo_Server.Shared.Models.Grupo>>($"api/v1/grupo", Grupo);
+        var result = await Http.PutJsonAsync<GenericResult<Grupo>>($"api/v1/grupo", Grupo);
+        if (!result.Sucesso)
+            MensagemErro = result.Mensagem;
+    }
+
+    protected async Task OnSalvar(Grupo Item)
+    {
+        MensagemSucesso = "Salvo com sucesso!";
+
+        var result = await Http.PutJsonAsync<GenericResult<Grupo>>($"api/v1/grupo", Item);
+        if (!result.Sucesso)
+            MensagemErro = result.Mensagem;
+        MensagemSucesso = "Salvo com sucesso!";
     }
 }
 

@@ -51,11 +51,14 @@ namespace JogoVarejo_Server.Server.Data
 
             modelBuilder.Entity<Controle>(entity =>
             {
-                entity.HasNoKey();
+                //entity.HasNoKey();
 
                 entity.ToTable("Controle");
 
                 entity.HasAnnotation("Relational:IsTableExcludedFromMigrations", false);
+
+                entity.Property(e => e.ControleId).HasColumnName("ControleID");
+
 
                 entity.Property(e => e.CustoFixoDiario)
                     .HasColumnType("decimal(5, 2)")

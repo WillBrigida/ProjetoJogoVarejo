@@ -77,7 +77,7 @@
         MensagemSucesso = "";
         MensagemErro = "";
 
-        if (true/*controle.ControleId != 0*/)
+        if (controle.ControleId != 0)
         {
             var result = await Http.PutJsonAsync<GenericResult<JogoVarejo_Server.Shared.Models.Controle>>("api/v1/controle/", controle);
             if (result.Sucesso)
@@ -117,7 +117,7 @@
         var response = await Http.GetJsonAsync<GenericResult<Controle>>("api/v1/controle/");
         if (response.Sucesso)
         {
-            controle = (Controle)response.Item;
+            controle = response.Item;
         }
         else
         {

@@ -12,10 +12,10 @@
 
     protected override async Task OnInitializedAsync()
     {
-        var respose = await Http.GetJsonAsync<GenericResult<JogoVarejo_Server.Shared.Models.Controle>>("api/v1/controle/");
+        var respose = await Http.GetJsonAsync<GenericResult<Controle>>("api/v1/controle/");
         if (respose.Sucesso)
         {
-            //Fase = respose. > 0 ? $"Fase {respose.Item.}" : "Aguarde. . .";
+            Fase = respose.Item.Fase > 0 ? $"Fase {respose.Item.Fase}" : "Aguarde. . .";
         }
         else
             Fase = $"Aguarde. . .";
