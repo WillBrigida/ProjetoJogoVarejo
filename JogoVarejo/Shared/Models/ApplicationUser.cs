@@ -1,5 +1,4 @@
-﻿using JogoVarejo.Models;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using System;
 
 namespace JogoVarejo.Shared.Models

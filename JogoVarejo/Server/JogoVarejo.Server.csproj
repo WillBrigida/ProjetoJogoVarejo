@@ -23,5 +23,9 @@
     <ProjectReference Include="..\Shared\JogoVarejo.Shared.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Models\" />
+  </ItemGroup>
+
 
 </Project>

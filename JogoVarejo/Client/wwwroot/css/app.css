@@ -40,12 +40,12 @@ app {
     flex: 1;
 }
 
-.sidebar {
+/*.sidebar {
     width: 160px;
     height: 100vh;
     position: sticky;
     top: 0;
-}
+}*/
 
     .main .top-row {
         /*background-color: #f7f7f7;

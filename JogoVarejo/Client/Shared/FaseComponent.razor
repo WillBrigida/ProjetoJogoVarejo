@@ -12,12 +12,12 @@
 
     protected override async Task OnInitializedAsync()
     {
-        //var respose = await Http.GetJsonAsync<JogoVarejo.Shared.Models.Utils.GenericResult<Controle>>("api/v1/controle/");
-        //if (respose.Sucesso)
-        //{
-        //    Fase = respose.Item.Fase > 0 ? $"Fase {respose.Item.Fase}" : "Aguarde. . .";
-        //}
-        //else
-        //    Fase = $"Aguarde. . .";
+        var respose = await Http.GetJsonAsync<GenericResult<Controle>>("api/v1/controle/");
+        if (respose.Sucesso)
+        {
+            Fase = respose.Item.Fase > 0 ? $"Fase {respose.Item.Fase}" : "Aguarde. . .";
+        }
+        else
+            Fase = $"Aguarde. . .";
     }
 }
