@@ -36,15 +36,25 @@ namespace JogoVarejo_Server.Server.Controllers
             }
         }
 
-        //[HttpGet("gerente/{userId}")]
-        //public async Task<ActionResult<List<Usuario>>> GetUsuario(Guid userId)
-        //{
-        //    var user = await _context.Users.Include(x => x.Grupos)
-        //        .SingleAsync(x => x.Id == userId.ToString());
+        [HttpGet("{id}")]
+        public async Task<ActionResult<List<Grupo>>> GetGrupo(int id)
+        {
+            try
+            {
+                var grupo = await _context.Grupos
+               .Where(x => x.GrupoId == id)
+               .FirstOrDefaultAsync();
+                if (grupo == null)
+                    return Ok(new GenericResult<Grupo> { Sucesso = false, Mensagem = "Usuário não encontrado" });
+                return Ok(new GenericResult<Grupo> { Sucesso = true, Item = grupo });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return BadRequest(new GenericResult<Grupo> { Sucesso = false, Mensagem = "Não foi possível atender essa solicitação. Tente novamente." });
+            }
 
-        //    var item = await _context.T_grupos.AsNoTracking().SingleOrDefaultAsync(x => x.GruposId == user.Grupos.GruposId);
-        //    return Ok(item);
-        //}
+        }
 
         //[HttpGet("operador/{userId}")]
         //public async Task<ActionResult<List<Usuario>>> GetOperador(Guid userId, int id = 0)

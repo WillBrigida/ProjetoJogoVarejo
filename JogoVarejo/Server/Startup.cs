@@ -54,9 +54,9 @@ namespace JogoVarejo.Server
             });
 
             services.AddDbContext<Data.AppDbContext>(options => options
-            //.UseSqlServer(_configuration.GetConnectionString("DefaultConnection")));
-            .UseMySql(_configuration.GetConnectionString("DefaultConnection"), mySqlOptions => mySqlOptions
-            .ServerVersion("10.2.11-mariadb")));
+            .UseSqlServer(_configuration.GetConnectionString("DefaultConnection")));
+            //.UseMySql(_configuration.GetConnectionString("DefaultConnection"), mySqlOptions => mySqlOptions
+            //.ServerVersion("10.2.11-mariadb")));
 
             //Identity
             services.AddIdentity<ApplicationUser, Microsoft.AspNetCore.Identity.IdentityRole>()

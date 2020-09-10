@@ -13,15 +13,15 @@
 <div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
     <ul class="nav flex-column">
 
-        <AuthorizeView Roles="Admin, Professor, Aluno">
+        @*<AuthorizeView Roles="Admin, Professor, Aluno">*@
             <li class="nav-item px-3">
                 <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
                     <span class="oi oi-home" aria-hidden="true"></span> Home
                 </NavLink>
             </li>
-        </AuthorizeView>
+        @*</AuthorizeView>*@
 
-        <AuthorizeView Roles="Admin, Professor">
+        @*<AuthorizeView Roles="Admin, Professor">*@
             <li class="nav-item px-3">
                 <NavLink class="nav-link" href="grupo">
                     <span class="oi oi-plus" aria-hidden="true"></span> Grupo
@@ -38,7 +38,7 @@
                     <span class="oi oi-list-rich" aria-hidden="true"></span> Reset BD
                 </NavLink>
             </li>
-        </AuthorizeView>
+        @*</AuthorizeView>*@
 
         <AuthorizeView Roles="Admin, Aluno">
             <li class="nav-item px-3">
@@ -93,7 +93,7 @@
 }
 
 
-<style>
+@*<style>
     .navbar-toggler {
         background-color: rgba(255, 255, 255, 0.1);
     }
@@ -156,4 +156,4 @@
             display: block;
         }
     }
-</style>
+</style>*@
