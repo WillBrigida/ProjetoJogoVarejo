@@ -9,7 +9,7 @@ namespace JogoVarejo.Data
     {
         public AppDbContext(DbContextOptions options) : base(options) { }
 
-        public DbSet<Controle> T_controle { get; set; }
-        public DbSet<Grupo> T_grupo{ get; set; }
+        //public DbSet<Controle> T_controle { get; set; }
+        //public DbSet<Grupo> T_grupo{ get; set; }
     }
 }

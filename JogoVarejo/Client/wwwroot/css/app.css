@@ -34,8 +34,17 @@ app {
     align-items: center;
 }
 
+
+
 .main {
     flex: 1;
+}
+
+.sidebar {
+    width: 160px;
+    height: 100vh;
+    position: sticky;
+    top: 0;
 }
 
     .main .top-row {
@@ -62,7 +71,10 @@ app {
 
 .sidebar {
     background: #4a8fa0;
+
 }
+
+
 
 /*.sidebar {
     width: 180px;

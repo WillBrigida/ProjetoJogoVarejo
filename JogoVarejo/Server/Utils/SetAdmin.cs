@@ -31,7 +31,7 @@ namespace JogoVarejo.Server.Utils
                 TipoUsuarioId = 1,
                 LockoutEnabled = false,
                 SecurityStamp = Guid.NewGuid().ToString()
-            };
+            };  
 
             var roleStore = new RoleStore<IdentityRole>(_context);
 

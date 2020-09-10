@@ -1,7 +1,7 @@
 ﻿@page "/"
 
-@*<AuthorizeView>
-    <Authorized>*@
+<AuthorizeView>
+    <Authorized>
         <div class="text-center" id="home">
             <h1 class="display-4">Jogo</h1>
             <h1 class="display-4">Gestão da Cadeia de Suprimentos</h1>
@@ -12,8 +12,16 @@
             <p>MBA em Gestão Industrial</p>
             <p>Disciplina Tecnologias em Gestão de Materiais</p>
         </div>
-    @*</Authorized>
-    <NotAuthorized>*@
-        <Login />
-    @*</NotAuthorized>
-</AuthorizeView>*@
+    </Authorized>
+    <NotAuthorized>
+        <Login/>
+    </NotAuthorized>
+</AuthorizeView>
+
+
+<style>
+    #home {
+        margin: 40px 0px 0px 0px;
+    }
+
+</style>

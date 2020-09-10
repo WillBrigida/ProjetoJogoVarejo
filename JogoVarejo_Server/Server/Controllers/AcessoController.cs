@@ -98,17 +98,17 @@ namespace JogoVarejo_Server.Server.Controller
         [HttpPost("deletar")]
         public async Task<ActionResult> Delete([FromBody] Usuario usuario)
         {
-            var user = await _userManager
+            try
+            {
+                var user = await _userManager
                 .Users
                 .SingleAsync(x => x.UserName == usuario.Login);
 
-            try
-            {
                 if (user == null)
                     return BadRequest(new GenericResult<Usuario> { Sucesso = false, Mensagem = "Usuário não encontrado! Atualize o navegador e tente novamente." });
 
                 await _userManager.DeleteAsync(user);
-                return Ok(new GenericResult<Usuario> {Sucesso = true});
+                return Ok(new GenericResult<Usuario> { Sucesso = true });
             }
             catch (Exception ex)
             {
@@ -130,7 +130,9 @@ namespace JogoVarejo_Server.Server.Controller
                 Senha = usuario.Senha,
                 TipoUsuarioId = usuario.TipoUsuarioId,
                 EmailConfirmed = true,
+                LockoutEnabled = false
             };
+
 
             var result = await _userManager.CreateAsync(user, usuario.Senha);
             if (!result.Succeeded)
@@ -168,7 +170,7 @@ namespace JogoVarejo_Server.Server.Controller
         //        return BadRequest(new LoginResult { Sucesso = false, Mensagem = ex.Message });
         //    }
 
-       // }
+        // }
 
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] Usuario usuario)
@@ -200,7 +202,7 @@ namespace JogoVarejo_Server.Server.Controller
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
-                return BadRequest(new LoginResult { Mensagem = "Não foi possível atender essa solicitação! Tente novamente" , Sucesso = false, Token = null });
+                return BadRequest(new LoginResult { Mensagem = "Não foi possível atender essa solicitação! Tente novamente", Sucesso = false, Token = null });
             }
 
         }

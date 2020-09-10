@@ -1,16 +1,44 @@
 ﻿@inherits LayoutComponentBase
 
+<AuthorizeView>
+    <Authorized>
+        <div class="sidebar">
+            <NavMenu />
+        </div>
 
-<div class="sidebar cor-site">
-    <NavMenu />
-</div>
-<div class="main">
-    <div class="top-row px-4">
+        <div class="main">
+            <div class="top-row px-4">
+                <LoginDisplay />
+            </div>
 
-        @*<LoginDisplay />*@
-    </div>
+            <div class="content px-4">
+                @Body
+            </div>
+        </div>
+    </Authorized>
 
-    <div class="content px-4">
-        @Body
-    </div>
-</div>
+    <NotAuthorized>
+        <div class="main">
+            <div class="content px-4">
+                @Body
+            </div>
+        </div>
+    </NotAuthorized>
+</AuthorizeView>
+
+
+
+<style>
+@@media (min-width: 768px) {
+    .main {
+        flex-direction: row;
+    }
+
+    .sidebar {
+        width: 180px;
+        height: 100vh;
+        position: sticky;
+        top: 0;
+    }
+
+</style>

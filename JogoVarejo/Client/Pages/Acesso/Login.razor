@@ -73,7 +73,7 @@
         var result = await AuthService.Login(Usuario);
         if (!result.Sucesso)
         {
-            MensagemErro = result.MensagemErro;
+            MensagemErro = result.Mensagem;
             IsBusy = false;
 
             return;
@@ -83,7 +83,6 @@
         IsBusy = false;
     }
 }
-
 
 
 <style>
@@ -101,6 +100,4 @@
     h3, label {
         color: #d7d7d7;
     }
-
-
 </style>
