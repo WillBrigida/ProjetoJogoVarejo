@@ -20,10 +20,10 @@ namespace JogoVarejo_Server.Server.Controllers
         [HttpGet(Name = "GetControle")]
         public async Task<ActionResult<Controle>> Get()
         {
-            var result = await _context.T_controle.FirstOrDefaultAsync();
+            var result = await _context.Controles.FirstOrDefaultAsync();
             if (result == null)
-                return Ok(new GenericResult<Controle> {Sucesso = false, Erro = "Não há regstro(s)" });
-            return Ok(new GenericResult<Controle> { Sucesso = true , obj = result});
+                return Ok(new GenericResult<Controle> {Sucesso = false, Mensagem = "Não há regstro(s)" });
+            return Ok(new GenericResult<Controle> { Sucesso = true , Item = result});
         }
 
         [HttpPost]
@@ -31,7 +31,7 @@ namespace JogoVarejo_Server.Server.Controllers
         {
             _context.Add(controle);
             await _context.SaveChangesAsync();
-            return new CreatedResult("GetControle", new GenericResult<Controle> {Sucesso = true, obj = controle});
+            return new CreatedResult("GetControle", new GenericResult<Controle> {Sucesso = true, Item = controle});
         }
 
         [HttpPut]

@@ -8,9 +8,10 @@ namespace JogoVarejo_Server.Shared.Models
 {
     public class GenericResult<T>
     {
+        public string Mensagem { get; set; }
         public bool Sucesso { get; set; }
-        public string Erro { get; set; }
-        public T obj { get; set; }
+        public object Item { get; set; }
+        public IEnumerable<object> Items { get; set; }
 
     }
 }

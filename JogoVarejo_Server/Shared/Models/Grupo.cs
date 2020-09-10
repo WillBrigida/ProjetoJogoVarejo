@@ -1,16 +1,15 @@
+﻿using System;
+using System.Collections.Generic;
 
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+#nullable disable
 
 namespace JogoVarejo_Server.Shared.Models
 {
-    public class Grupo
+    public partial class Grupo
     {
-        [Key]
         public int GrupoId { get; set; }
-        public int GrupoUsuarioId { get; set; }
-        public int GrupoOperadorId { get; set; }
         public string Quando { get; set; }
         public string Quanto { get; set; }
+        public int? GrupoOperador { get; set; }
     }
 }

@@ -35,7 +35,7 @@
                         @foreach (var item in grupos)
                         {
                         <tr>
-                            <td width="200">@item.GrupoUsuarioId</td>
+                            <td width="200">@item.GrupoId</td>
 
                             <td width="250">
                                 <EditForm Model="grupos">
@@ -49,7 +49,7 @@
                                 </EditForm>
                             </td>
                           
-                            <td width="200">@item.GrupoOperadorId</td>
+                            <td width="200">@item.GrupoOperador</td>
                             <td width="250" class="text-center">
                                 <button class="btn btn-link" style="color:cornflowerblue;" @onclick="@(()=> OnDetalheGrupo(item))"><i class="far fa-edit"></i></button>
                                 <button class="btn btn btn-link" style="color:mediumseagreen;" @onclick="@(()=> OnHistorico())"><i class="fas fa-history"></i></button>

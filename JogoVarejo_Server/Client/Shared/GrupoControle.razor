@@ -23,9 +23,8 @@
                 <table class="table table-striped">
                     <thead class="cor-site" style="color:#d7d7d7">
                         <tr>
-                            <th>Id</th>
                             <th>Nome</th>
-                            <th>Grupo Operador</th>
+                            <th>Login</th>
                             <th>Senha</th>
                             <th></th>
                             <th></th>
@@ -36,21 +35,18 @@
                         @foreach (var item in usuarios)
                         {
                         <tr>
-                            <td>
-                                @item.GrupoUsuarioId
-                            </td>
                             <td width="100px">
                                 @item.Nome
                             </td>
 
-                            <td>
-                                <EditForm Model="usuarios">
-                                    <InputNumber Id="usuarios" class="form-control" @bind-Value="item.Grupo.GrupoOperadorId" />
-                                </EditForm>
+                            <td width="100px">
+                                @item.Login
                             </td>
 
                             <td>
-                                @item.Senha
+                                <EditForm Model="usuarios">
+                                    <InputText Id="usuarios" class="form-control" @bind-Value="item.Senha" />
+                                </EditForm>
                             </td>
 
                             <td width="60">
@@ -61,13 +57,10 @@
                                 <button class="btn btn-link" style="color:mediumseagreen;" @onclick="@(()=> OnSalvar(item))"><i class="far fa-save" style="color:mediumseagreen"></i></button>
                             </td>
 
-
-
                         </tr>
                         }
                     </tbody>
                 </table>
-                @*<button type="button" class="btn btn-primary" @onclick="@OnSalvar">Salvar</button>*@
 
             </div>
         }
@@ -107,12 +100,12 @@
 
     async Task OnSalvar(Usuario usr)
     {
-        var result = await Http.PutJsonAsync<LoginResult>("api/v1/acesso/", usr);
+        var result = await Http.PutJsonAsync<LoginResult>("api/v1/acesso/usuarios", usr);
         if (result.Sucesso)
         {
             MensagemSucesso = "Dado(s) alterado(s)!";
         }
         else
-            MensagemErro = "Não foi possível atender sua requisição!. Tente novamente.";
+            MensagemErro = result.Mensagem;
     }
 }

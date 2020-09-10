@@ -70,14 +70,14 @@
     public bool IsBusy { get; set; }
 
 
-    public JogoVarejo_Server.Shared.Models.Controle controle = new JogoVarejo_Server.Shared.Models.Controle();
+    public Controle controle = new Controle();
 
     protected async Task OnSalvar()
     {
         MensagemSucesso = "";
         MensagemErro = "";
 
-        if (controle.ControleId != 0)
+        if (true/*controle.ControleId != 0*/)
         {
             var result = await Http.PutJsonAsync<GenericResult<JogoVarejo_Server.Shared.Models.Controle>>("api/v1/controle/", controle);
             if (result.Sucesso)
@@ -90,12 +90,12 @@
         }
         else
         {
-            var result = await Http.PostJsonAsync<GenericResult<JogoVarejo_Server.Shared.Models.Controle>>("api/v1/controle/", controle);
+            var result = await Http.PostJsonAsync<GenericResult<Controle>>("api/v1/controle/", controle);
             if (result.Sucesso)
             {
                 MensagemSucesso = "Dado(s) salvo(s)!";
                 AppState.SetFase($"Fase {controle.Fase.ToString()}");
-                controle.ControleId = result.obj.ControleId;
+                //controle.ControleId = result.obj.ControleId;
             }
             else
                 MensagemErro = "Não foi possível atender sua requisição!. Tente novamente.";
@@ -114,18 +114,17 @@
         MensagemSucesso = "";
         MensagemErro = "";
 
-        var respose = await Http.GetJsonAsync<GenericResult<JogoVarejo_Server.Shared.Models.Controle>>("api/v1/controle/");
-        if (respose.Sucesso)
+        var response = await Http.GetJsonAsync<GenericResult<Controle>>("api/v1/controle/");
+        if (response.Sucesso)
         {
-            controle = respose.obj;
+            controle = (Controle)response.Item;
         }
         else
         {
-            MensagemErro = respose.Erro;
+           MensagemErro = response.Mensagem;
             controle = new JogoVarejo_Server.Shared.Models.Controle
             {
                 Duracao = 0,
-                ControleId = 0,
                 Fase = 0
             };
         }
@@ -137,15 +136,15 @@
         MensagemSucesso = "";
         MensagemErro = "";
 
-        if (controle.ControleId == 0 || controle.Fase < 1)
-        {
-            MensagemErro = "O jogo ainda não foi iniciado!";
-            return;
-        }
+        //if (controle.ControleId == 0 || controle.Fase < 1)
+        //{
+        //    MensagemErro = "O jogo ainda não foi iniciado!";
+        //    return;
+        //}
 
         var ctl = new JogoVarejo_Server.Shared.Models.Controle
         {
-            ControleId = controle.ControleId,
+            //ControleId = controle.ControleId,
             Duracao = 0,
             Fase = 0,
         };

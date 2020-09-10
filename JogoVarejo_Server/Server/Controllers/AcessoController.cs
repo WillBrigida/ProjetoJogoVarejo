@@ -2,7 +2,6 @@
 using JogoVarejo_Server.Server.Utils;
 using JogoVarejo_Server.Shared.Models;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -42,25 +41,10 @@ namespace JogoVarejo_Server.Server.Controller
 
         }
 
-        
-
-
-        //[HttpGet("modelo")]
-        //public async Task<ActionResult> GetModelo()
-        //{
-        //    var claimsIdentity = this.User.Identity as ClaimsIdentity;
-        //    var userId = claimsIdentity.FindFirst(JwtRegisteredClaimNames.Sub)?.Value;
-        //    var userId1 = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        //    var userId2 = claimsIdentity.FindFirst(ClaimTypes.Name)?.Value;
-
-        //    return base.Ok(new Usuario());
-        //}
-
         [HttpGet("usuarios")]
         public async Task<ActionResult<List<Usuario>>> Login()
         {
             var usuario = await _userManager.Users
-                .Include(g => g.Grupo)
                 .Where(u => u.TipoUsuarioId == 2).ToListAsync();
 
             var listUsuario = new List<Usuario>();
@@ -68,28 +52,69 @@ namespace JogoVarejo_Server.Server.Controller
             {
                 listUsuario.Add(new Usuario
                 {
-                    GrupoUsuarioId = item.GrupoUsuarioId,
                     Nome = item.Nome,
                     Login = item.Login,
                     TipoUsuarioId = item.TipoUsuarioId,
                     Senha = item.Senha,
-                    Grupo = item.Grupo
                 });
             }
             return listUsuario;
         }
 
-        [HttpPost("deletar")]
+        [HttpPut("usuarios")]
+        public async Task<ActionResult> Put(Usuario usuario)
+        {
+            var user = await _userManager
+                .Users
+                .SingleAsync(x => x.UserName == usuario.Login);
 
+            if (user == null)
+                return BadRequest(new GenericResult<Usuario> { Sucesso = false, Mensagem = "Usuário não encontrado! Atualize o navegador e tente novamente." });
+
+            try
+            {
+                var result = await _userManager.ChangePasswordAsync(user, user.Senha, usuario.Senha);
+
+                if (!result.Succeeded)
+                    return BadRequest(new GenericResult<Usuario> { Sucesso = false, Mensagem = "Não foi possível alterar a senha" });
+
+                var usr = await _userManager.FindByIdAsync(user.Id);
+                usr.Senha = usuario.Senha;
+                //usr.Nome = usuario.Nome;
+                //usr.UserName = usuario.Login;
+                usr.EmailConfirmed = true;
+                await _userManager.UpdateAsync(usr);
+                return Ok(new GenericResult<Usuario> { Sucesso = true });
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return BadRequest(new LoginResult { Mensagem = "Não foi possível atender essa solicitação! Tente novamente", Sucesso = false, Token = null });
+            }
+
+        }
+
+        [HttpPost("deletar")]
         public async Task<ActionResult> Delete([FromBody] Usuario usuario)
         {
             var user = await _userManager
                 .Users
-                .Include(g => g.Grupo)
-                .SingleAsync(x => x.GrupoUsuarioId == usuario.GrupoUsuarioId);
+                .SingleAsync(x => x.UserName == usuario.Login);
 
-            await _userManager.DeleteAsync(user);
-            return Ok();
+            try
+            {
+                if (user == null)
+                    return BadRequest(new GenericResult<Usuario> { Sucesso = false, Mensagem = "Usuário não encontrado! Atualize o navegador e tente novamente." });
+
+                await _userManager.DeleteAsync(user);
+                return Ok(new GenericResult<Usuario> {Sucesso = true});
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return BadRequest(new GenericResult<Usuario> { Sucesso = false, Mensagem = "Não foi possível atender essa solicitação. Tente novamente." });
+            }
         }
 
 
@@ -103,14 +128,8 @@ namespace JogoVarejo_Server.Server.Controller
                 UserName = usuario.Login,
                 Email = usuario.Login,
                 Senha = usuario.Senha,
-                GrupoUsuarioId = usuario.GrupoUsuarioId,
                 TipoUsuarioId = usuario.TipoUsuarioId,
-               
-                Grupo = new Grupo
-                {
-                    GrupoUsuarioId = usuario.GrupoUsuarioId,
-                    GrupoOperadorId = 0,
-                }
+                EmailConfirmed = true,
             };
 
             var result = await _userManager.CreateAsync(user, usuario.Senha);
@@ -125,36 +144,35 @@ namespace JogoVarejo_Server.Server.Controller
             return Ok(new CadastroResult { Sucesso = true });
         }
 
-        [HttpPut]
-        public async Task<ActionResult<Usuario>> Put(Usuario usuario)
-        {
-            var user = await _userManager.Users
-                .Include(g => g.Grupo)
-                .SingleAsync(x => x.GrupoUsuarioId == usuario.GrupoUsuarioId);
+        //[HttpPut]
+        //public async Task<ActionResult<Usuario>> Put(Usuario usuario)
+        //{
+        //    var user = await _userManager.Users
+        //        .Include(g => g.Grupo)
+        //        .SingleAsync(x => x.GrupoUsuarioId == usuario.GrupoUsuarioId);
 
-            user.Grupo.GrupoOperadorId = usuario.Grupo.GrupoOperadorId;
+        //    user.Grupo.GrupoOperadorId = usuario.Grupo.GrupoOperadorId;
 
-            try
-            {
-
-
-                _db.Entry(user).State = EntityState.Modified;
-                var result = await _userManager.UpdateAsync(user);
+        //    try
+        //    {
 
 
-                return Ok(new LoginResult { Sucesso = true });
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new LoginResult { Sucesso = false, Mensagem = ex.Message });
-            }
-            
-        }
+        //        _db.Entry(user).State = EntityState.Modified;
+        //        var result = await _userManager.UpdateAsync(user);
+
+
+        //        return Ok(new LoginResult { Sucesso = true });
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return BadRequest(new LoginResult { Sucesso = false, Mensagem = ex.Message });
+        //    }
+
+       // }
 
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] Usuario usuario)
         {
-
             var result = new LoginResult();
             try
             {
@@ -181,7 +199,8 @@ namespace JogoVarejo_Server.Server.Controller
             }
             catch (Exception ex)
             {
-                return BadRequest(new LoginResult { Mensagem = ex.Message, Sucesso = false, Token = null });
+                Console.WriteLine(ex.Message);
+                return BadRequest(new LoginResult { Mensagem = "Não foi possível atender essa solicitação! Tente novamente" , Sucesso = false, Token = null });
             }
 
         }

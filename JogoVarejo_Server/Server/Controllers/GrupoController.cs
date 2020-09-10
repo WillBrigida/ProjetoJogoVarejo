@@ -1,8 +1,6 @@
 ﻿using JogoVarejo_Server.Server.Data;
-using JogoVarejo_Server.Server.Migrations;
 using JogoVarejo_Server.Shared.Models;
 using Microsoft.AspNetCore.Mvc;
-using JogoVarejo_Server.Shared.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -21,62 +19,62 @@ namespace JogoVarejo_Server.Server.Controllers
             _context = context;
         }
 
-        [HttpGet]
-        public async Task<ActionResult<List<Usuario>>> Get()
-        {
-            var list = await _context.T_grupo.AsNoTracking().ToListAsync();
-            return Ok(list);
-        }
+        //[HttpGet]
+        //public async Task<ActionResult<List<Usuario>>> Get()
+        //{
+        //    var list = await _context.Grupos.AsNoTracking().ToListAsync();
+        //    return Ok(list);
+        //}
 
-        [HttpGet("gerente/{userId}")]
-        public async Task<ActionResult<List<Usuario>>> GetUsuario(Guid userId)
-        {
-            var user = await _context.Users.Include(x => x.Grupo)
-                .SingleAsync(x => x.Id == userId.ToString());
+        //[HttpGet("gerente/{userId}")]
+        //public async Task<ActionResult<List<Usuario>>> GetUsuario(Guid userId)
+        //{
+        //    var user = await _context.Users.Include(x => x.Grupos)
+        //        .SingleAsync(x => x.Id == userId.ToString());
 
-            var item = await _context.T_grupo.AsNoTracking().SingleOrDefaultAsync(x => x.GrupoId == user.Grupo.GrupoId);
-            return Ok(item);
-        }
+        //    var item = await _context.T_grupos.AsNoTracking().SingleOrDefaultAsync(x => x.GruposId == user.Grupos.GruposId);
+        //    return Ok(item);
+        //}
 
-        [HttpGet("operador/{userId}")]
-        public async Task<ActionResult<List<Usuario>>> GetOperador(Guid userId, int id = 0)
-        {
-            var user = await _context.Users.Include(x => x.Grupo)
-                .SingleAsync(x => x.Id == userId.ToString());
+        //[HttpGet("operador/{userId}")]
+        //public async Task<ActionResult<List<Usuario>>> GetOperador(Guid userId, int id = 0)
+        //{
+        //    var user = await _context.Users.Include(x => x.Grupos)
+        //        .SingleAsync(x => x.Id == userId.ToString());
 
-            var itm = await _context.T_grupo
-               .Where(x => x.GrupoOperadorId == user.Grupo.GrupoUsuarioId).FirstOrDefaultAsync();
+        //    var itm = await _context.T_grupos
+        //       .Where(x => x.GruposOperadorId == user.Grupos.GruposUsuarioId).FirstOrDefaultAsync();
 
-            var grupo = new JogoVarejo_Server.Shared.Models.Grupo
-            {
-                GrupoId = itm.GrupoId,
-                GrupoOperadorId = itm.GrupoUsuarioId,
-                GrupoUsuarioId = itm.GrupoOperadorId,
-                Quando = itm.Quando,
-                Quanto = itm.Quanto
-            };
+        //    var grupos = new JogoVarejo_Server.Shared.Models.Grupos
+        //    {
+        //        GruposId = itm.GruposId,
+        //        GruposOperadorId = itm.GruposUsuarioId,
+        //        GruposUsuarioId = itm.GruposOperadorId,
+        //        Quando = itm.Quando,
+        //        Quanto = itm.Quanto
+        //    };
 
-            return Ok(grupo);
-        }
+        //    return Ok(grupos);
+        //}
 
 
-        [HttpPost("deletar")]
-        public async Task<ActionResult> Delete([FromBody] JogoVarejo_Server.Shared.Models.Grupo grupo)
-        {
-            var grp = await _context.T_grupo
-                .FirstOrDefaultAsync(x => x.GrupoId == grupo.GrupoId);
+        //[HttpPost("deletar")]
+        //public async Task<ActionResult> Delete([FromBody] JogoVarejo_Server.Shared.Models.Grupos grupos)
+        //{
+        //    var grp = await _context.T_grupos
+        //        .FirstOrDefaultAsync(x => x.GruposId == grupos.GruposId);
 
-            _context.Remove(grp);
-            await _context.SaveChangesAsync();
-            return Ok(new GenericResult<JogoVarejo_Server.Shared.Models.Grupo> { Sucesso = true, obj = grp });
-        }
+        //    _context.Remove(grp);
+        //    await _context.SaveChangesAsync();
+        //    return Ok(new GenericResult<JogoVarejo_Server.Shared.Models.Grupos> { Sucesso = true, obj = grp });
+        //}
 
-        [HttpPut]
-        public async Task<ActionResult<JogoVarejo_Server.Shared.Models.Grupo>> Put([FromBody] JogoVarejo_Server.Shared.Models.Grupo grupo)
-        {
-            _context.Entry(grupo).State = EntityState.Modified;
-            await _context.SaveChangesAsync();
-            return Ok(new GenericResult<JogoVarejo_Server.Shared.Models.Grupo> { Sucesso = true });
-        }
+        //[HttpPut]
+        //public async Task<ActionResult<JogoVarejo_Server.Shared.Models.Grupos>> Put([FromBody] JogoVarejo_Server.Shared.Models.Grupos grupos)
+        //{
+        //    _context.Entry(grupos).State = EntityState.Modified;
+        //    await _context.SaveChangesAsync();
+        //    return Ok(new GenericResult<JogoVarejo_Server.Shared.Models.Grupos> { Sucesso = true });
+        //}
     }
 }

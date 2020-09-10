@@ -41,12 +41,6 @@ namespace JogoVarejo_Server.Server.Migrations
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
 
-                    b.Property<int?>("GrupoId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("GrupoUsuarioId")
-                        .HasColumnType("int");
-
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("bit");
 
@@ -82,9 +76,6 @@ namespace JogoVarejo_Server.Server.Migrations
                     b.Property<string>("Senha")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("TesteId")
-                        .HasColumnType("int");
-
                     b.Property<int>("TipoUsuarioId")
                         .HasColumnType("int");
 
@@ -97,8 +88,6 @@ namespace JogoVarejo_Server.Server.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("GrupoId");
-
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");
 
@@ -107,75 +96,7 @@ namespace JogoVarejo_Server.Server.Migrations
                         .HasDatabaseName("UserNameIndex")
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
-                    b.HasIndex("TesteId");
-
                     b.ToTable("AspNetUsers");
-                });
-
-            modelBuilder.Entity("JogoVarejo_Server.Shared.Models.Controle", b =>
-                {
-                    b.Property<int>("ControleId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .UseIdentityColumn();
-
-                    b.Property<int>("Duracao")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Fase")
-                        .HasColumnType("int");
-
-                    b.HasKey("ControleId");
-
-                    b.ToTable("T_controle");
-                });
-
-            modelBuilder.Entity("JogoVarejo_Server.Shared.Models.Grupo", b =>
-                {
-                    b.Property<int>("GrupoId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .UseIdentityColumn();
-
-                    b.Property<int>("GrupoOperadorId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("GrupoUsuarioId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Quando")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Quanto")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("GrupoId");
-
-                    b.ToTable("T_grupo");
-                });
-
-            modelBuilder.Entity("JogoVarejo_Server.Shared.Models.Teste", b =>
-                {
-                    b.Property<int>("TesteId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .UseIdentityColumn();
-
-                    b.Property<int>("GrupoOperadorId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("GrupoUsuarioId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Quando")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Quanto")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("TesteId");
-
-                    b.ToTable("T_teste");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -307,17 +228,6 @@ namespace JogoVarejo_Server.Server.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens");
-                });
-
-            modelBuilder.Entity("JogoVarejo_Server.Shared.Models.ApplicationUser", b =>
-                {
-                    b.HasOne("JogoVarejo_Server.Shared.Models.Grupo", "Grupo")
-                        .WithMany()
-                        .HasForeignKey("GrupoId");
-
-                    b.HasOne("JogoVarejo_Server.Shared.Models.Teste", "Teste")
-                        .WithMany()
-                        .HasForeignKey("TesteId");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

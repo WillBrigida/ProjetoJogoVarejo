@@ -42,19 +42,28 @@ namespace JogoVarejo_Server.Server.Utils
                 await roleStore.CreateAsync(new IdentityRole { Name = "Aluno", NormalizedName = "ALUNO" });
             }
 
-            if (!_context.Users.Any(u => u.UserName == user.UserName))
+            try
             {
-                var password = new PasswordHasher<ApplicationUser>();
-               var hashed = password.HashPassword(user, "1q2w3e4r");
-                user.PasswordHash = hashed;
-                var userStore = new UserStore<ApplicationUser>(_context);
-                await userStore.CreateAsync(user);
+                if (!_context.Users.Any(u => u.UserName == user.UserName))
+                {
+                    var password = new PasswordHasher<ApplicationUser>();
+                    var hashed = password.HashPassword(user, "1q2w3e4r");
+                    user.PasswordHash = hashed;
+                    var userStore = new UserStore<ApplicationUser>(_context);
+                    await userStore.CreateAsync(user);
 
-                await userStore.AddToRoleAsync(user, "Admin");
-                await userStore.AddToRoleAsync(user, "Professor");
+                    await userStore.AddToRoleAsync(user, "Admin");
+                    await userStore.AddToRoleAsync(user, "Professor");
+                }
+
+                await _context.SaveChangesAsync();
             }
+            catch (Exception ex)
+            {
 
-            await _context.SaveChangesAsync();
+                throw;
+            }
+        
         }
     }
 }
