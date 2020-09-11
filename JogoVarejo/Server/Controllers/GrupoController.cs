@@ -105,9 +105,6 @@ namespace JogoVarejo.Server.Controllers
                 Console.WriteLine(ex.Message);
                 return BadRequest(new GenericResult<Grupos> { Sucesso = false, Mensagem = "Não foi possível atender essa solicitação. Tente novamente." });
             }
-
         }
-
-       
     }
 }
