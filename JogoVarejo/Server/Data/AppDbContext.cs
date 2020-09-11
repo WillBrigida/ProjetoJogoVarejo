@@ -17,7 +17,7 @@ namespace JogoVarejo.Data
         public virtual DbSet<Sorteados> Sorteados { get; set; }
         public virtual DbSet<VwIndicadorNumeroEncomendas> VwIndicadorNumeroEncomendas { get; set; }
         public virtual DbSet<VwIndicadorQuebrasDeEstoque> VwIndicadorQuebrasDeEstoque { get; set; }
-        public virtual DbSet<VwIndicadores> VwIndicadores { get; set; }
+        public virtual DbQuery<VwIndicadores> VwIndicadores { get; set; }
         public virtual DbSet<VwIndicadoresMovimentos> VwIndicadoresMovimentos { get; set; }
         public virtual DbSet<VwIndicadoresSuprimentos> VwIndicadoresSuprimentos { get; set; }
         public virtual DbSet<VwMovimentos> VwMovimentos { get; set; }

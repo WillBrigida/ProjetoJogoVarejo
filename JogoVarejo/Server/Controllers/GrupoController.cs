@@ -57,26 +57,27 @@ namespace JogoVarejo.Server.Controllers
 
         }
 
-        //[HttpGet("operador/{userId}")]
-        //public async Task<ActionResult<List<Usuario>>> GetOperador(Guid userId, int id = 0)
-        //{
-        //    var user = await _context.Users.Include(x => x.Grupos)
-        //        .SingleAsync(x => x.Id == userId.ToString());
+        [HttpGet("operador/{userId}")]
+        public async Task<ActionResult<List<ApplicationUser>>> GetOperador(Guid userId)
+        {
+           
 
-        //    var itm = await _context.T_grupos
-        //       .Where(x => x.GruposOperadorId == user.Grupos.GruposUsuarioId).FirstOrDefaultAsync();
+            var user = await _context.Users
+                .SingleAsync(x => x.Id == userId.ToString());
 
-        //    var grupos = new JogoVarejo_Server.Shared.Models.Grupos
-        //    {
-        //        GruposId = itm.GruposId,
-        //        GruposOperadorId = itm.GruposUsuarioId,
-        //        GruposUsuarioId = itm.GruposOperadorId,
-        //        Quando = itm.Quando,
-        //        Quanto = itm.Quanto
-        //    };
+            var itm = await _context.Grupos
+               .Where(x => x.GrupoOperador == user.GrupoUsuarioId).FirstOrDefaultAsync();
 
-        //    return Ok(grupos);
-        //}
+            var grupos = new Grupos
+            {
+                GrupoOperador = itm.GrupoId,
+                GrupoId = (int)itm.GrupoOperador,
+                Quando = itm.Quando,
+                Quanto = itm.Quanto
+            };
+
+            return Ok(grupos);
+        }
 
 
         //[HttpPost("deletar")]
@@ -106,5 +107,7 @@ namespace JogoVarejo.Server.Controllers
             }
 
         }
+
+       
     }
 }

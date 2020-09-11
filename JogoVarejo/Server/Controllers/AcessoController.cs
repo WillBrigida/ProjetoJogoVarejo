@@ -51,6 +51,25 @@ namespace JogoVarejo.Server.Controller
           
         }
 
+
+        [HttpGet("{userId}")]
+        public async Task<ActionResult<List<ApplicationUser>>> GetById( Guid userId)
+        {
+            try
+            {
+                var usuario = await _userManager.Users
+               .Where(u => u.Id == userId.ToString()).FirstOrDefaultAsync();
+                if (usuario == null)
+                    return Ok(new GenericResult<ApplicationUser> {  Mensagem = "Usuário não encontrado", Sucesso = false });
+                return Ok(new GenericResult<ApplicationUser> {  Sucesso = true, Item = usuario });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return BadRequest(new GenericResult<ApplicationUser> { Mensagem = "Não foi possível atender essa solicitação! Tente novamente", Sucesso = false, Token = null });
+            }
+        }
+
         [HttpPut("usuarios")]
         public async Task<ActionResult> Put(ApplicationUser usuario)
         {
@@ -82,7 +101,6 @@ namespace JogoVarejo.Server.Controller
                 Console.WriteLine(ex.Message);
                 return BadRequest(new GenericResult<ApplicationUser> { Mensagem = "Não foi possível atender essa solicitação! Tente novamente", Sucesso = false, Token = null });
             }
-
         }
 
         [HttpPost("deletar")]
@@ -120,7 +138,8 @@ namespace JogoVarejo.Server.Controller
                 Senha = usuario.Senha,
                 TipoUsuarioId = usuario.TipoUsuarioId,
                 EmailConfirmed = true,
-                LockoutEnabled = false
+                LockoutEnabled = false,
+                GrupoUsuarioId = usuario.GrupoUsuarioId,
             };
 
 
