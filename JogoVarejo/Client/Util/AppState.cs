@@ -5,7 +5,7 @@ namespace JogoVarejo.Client.Util
     public class AppState
     {
         public string SelectedColour { get; private set; }
-        public string SelectFase { get; private set; }
+        public string SelectFase { get;  set; }
 
         public event Action OnChange;
 
