@@ -31,7 +31,6 @@ namespace JogoVarejo.Server
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc();
-            services.AddTransient<SetAdmin>();
             services.AddControllersWithViews();
             services.AddRazorPages();
 
@@ -54,9 +53,10 @@ namespace JogoVarejo.Server
             });
 
             services.AddDbContext<Data.AppDbContext>(options => options
-            .UseSqlServer(_configuration.GetConnectionString("DefaultConnection")));
+            .UseSqlServer(_configuration.GetConnectionString("DefaultConnection")).EnableSensitiveDataLogging(true));
             //.UseMySql(_configuration.GetConnectionString("DefaultConnection"), mySqlOptions => mySqlOptions
             //.ServerVersion("10.2.11-mariadb")));
+          
 
             //Identity
             services.AddIdentity<ApplicationUser, Microsoft.AspNetCore.Identity.IdentityRole>()
@@ -97,9 +97,8 @@ namespace JogoVarejo.Server
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, SetAdmin seeder)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            seeder.SeedAdminUser();
 
             if (env.IsDevelopment())
             {

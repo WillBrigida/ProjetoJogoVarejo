@@ -1,6 +1,8 @@
 ﻿using JogoVarejo.Shared.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using System;
 
 namespace JogoVarejo.Data
 {
@@ -8,19 +10,21 @@ namespace JogoVarejo.Data
     {
         public AppDbContext(DbContextOptions options) : base(options) { }
 
-        //public DbSet<Controle> T_controle { get; set; }
-        //public DbSet<Grupo> T_grupo{ get; set; }
+        public AppDbContext()
+        {
+
+        }
         public virtual DbSet<Compras> Compras { get; set; }
         public virtual DbSet<Controle> Controle { get; set; }
         public virtual DbSet<Grupos> Grupos { get; set; }
         public virtual DbSet<Movimentos> Movimentos { get; set; }
         public virtual DbSet<Sorteados> Sorteados { get; set; }
-        public virtual DbSet<VwIndicadorNumeroEncomendas> VwIndicadorNumeroEncomendas { get; set; }
+        public virtual DbQuery<VwIndicadorNumeroEncomendas> VwIndicadorNumeroEncomendas { get; set; }
         public virtual DbSet<VwIndicadorQuebrasDeEstoque> VwIndicadorQuebrasDeEstoque { get; set; }
         public virtual DbQuery<VwIndicadores> VwIndicadores { get; set; }
-        public virtual DbSet<VwIndicadoresMovimentos> VwIndicadoresMovimentos { get; set; }
-        public virtual DbSet<VwIndicadoresSuprimentos> VwIndicadoresSuprimentos { get; set; }
-        public virtual DbSet<VwMovimentos> VwMovimentos { get; set; }
+        public virtual DbQuery<VwIndicadoresMovimentos> VwIndicadoresMovimentos { get; set; }
+        public virtual DbQuery<VwIndicadoresSuprimentos> VwIndicadoresSuprimentos { get; set; }
+        public virtual DbQuery<VwMovimentos> VwMovimentos { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -35,15 +39,40 @@ namespace JogoVarejo.Data
         {
             base.OnModelCreating(modelBuilder);
 
+            modelBuilder.Entity<IdentityRole>().HasData(new IdentityRole
+            {
+                Name = "Professor",
+                NormalizedName = "PROFESSOR",
+                Id = Guid.NewGuid().ToString(),
+                ConcurrencyStamp = Guid.NewGuid().ToString()
+            });
+
+            modelBuilder.Entity<IdentityRole>().HasData(new IdentityRole
+            {
+                Name = "Aluno",
+                NormalizedName = "ALUNO",
+                Id = Guid.NewGuid().ToString(),
+                ConcurrencyStamp = Guid.NewGuid().ToString()
+            });
+
+            modelBuilder.Entity<IdentityRole>().HasData(new IdentityRole
+            {
+                Name = "Admin",
+                NormalizedName = "ADMIN",
+                Id = Guid.NewGuid().ToString(),
+                ConcurrencyStamp = Guid.NewGuid().ToString()
+            });
+
+
             modelBuilder.Entity<Compras>(entity =>
-        {
-            entity.HasKey(e => e.CompraId)
-                .HasName("PK__Compras__067DA725E2468A6E");
+            {
+                entity.HasKey(e => e.CompraId)
+                    .HasName("PK__Compras__067DA7257C9CB207");
 
-            entity.Property(e => e.CompraId).HasColumnName("CompraID");
+                entity.Property(e => e.CompraId).HasColumnName("CompraID");
 
-            entity.Property(e => e.GrupoId).HasColumnName("GrupoID");
-        });
+                entity.Property(e => e.GrupoId).HasColumnName("GrupoID");
+            });
 
             modelBuilder.Entity<Controle>(entity =>
             {
@@ -82,7 +111,7 @@ namespace JogoVarejo.Data
             modelBuilder.Entity<Movimentos>(entity =>
             {
                 entity.HasKey(e => e.MovimentoId)
-                    .HasName("PK__Moviment__D467F61CD8B39135");
+                    .HasName("PK__Moviment__D467F61CCA2394FB");
 
                 entity.Property(e => e.MovimentoId).HasColumnName("MovimentoID");
 

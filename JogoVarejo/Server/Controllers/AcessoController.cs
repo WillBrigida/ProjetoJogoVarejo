@@ -48,20 +48,20 @@ namespace JogoVarejo.Server.Controller
             var usuario = await _userManager.Users
                 .Where(u => u.TipoUsuarioId == 2).ToListAsync();
             return Ok(usuario);
-          
+
         }
 
 
         [HttpGet("{userId}")]
-        public async Task<ActionResult<List<ApplicationUser>>> GetById( Guid userId)
+        public async Task<ActionResult<List<ApplicationUser>>> GetById(Guid userId)
         {
             try
             {
                 var usuario = await _userManager.Users
                .Where(u => u.Id == userId.ToString()).FirstOrDefaultAsync();
                 if (usuario == null)
-                    return Ok(new GenericResult<ApplicationUser> {  Mensagem = "Usuário não encontrado", Sucesso = false });
-                return Ok(new GenericResult<ApplicationUser> {  Sucesso = true, Item = usuario });
+                    return Ok(new GenericResult<ApplicationUser> { Mensagem = "Usuário não encontrado", Sucesso = false });
+                return Ok(new GenericResult<ApplicationUser> { Sucesso = true, Item = usuario });
             }
             catch (Exception ex)
             {
@@ -147,7 +147,11 @@ namespace JogoVarejo.Server.Controller
             if (!result.Succeeded)
                 return Ok(new GenericResult<ApplicationUser> { Mensagem = "Erro", Sucesso = false });
 
-            if (user.TipoUsuarioId == 1)
+
+            if (user.Email == "admin@admin.com")
+                await _userManager.AddToRoleAsync(user, "Admin");
+
+            else if (user.TipoUsuarioId == 1)
                 await _userManager.AddToRoleAsync(user, "Professor");
             else
                 await _userManager.AddToRoleAsync(user, "Aluno");

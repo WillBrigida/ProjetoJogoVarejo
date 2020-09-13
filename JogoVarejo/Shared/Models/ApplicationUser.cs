@@ -1,10 +1,13 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace JogoVarejo.Shared.Models
 {
     public class ApplicationUser : IdentityUser
     {
+        //[Key]
+        //public string Id { get; set; }
         public int GrupoUsuarioId { get; set; }
         public int TipoUsuarioId { get; set; }
         public string Nome { get; set; }

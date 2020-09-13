@@ -127,6 +127,29 @@ namespace JogoVarejo.Server.Migrations
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("AspNetRoles");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "9fc1d2d0-b6da-4f9d-9526-affaeea63b5e",
+                            ConcurrencyStamp = "99d2501e-1122-41fa-88b1-6196c971145b",
+                            Name = "Professor",
+                            NormalizedName = "PROFESSOR"
+                        },
+                        new
+                        {
+                            Id = "e8d5c779-4479-40f1-bfdf-df7a07b6a7d9",
+                            ConcurrencyStamp = "016872a3-655c-450b-a22f-e1b298771a37",
+                            Name = "Aluno",
+                            NormalizedName = "ALUNO"
+                        },
+                        new
+                        {
+                            Id = "cbe72cdf-df0c-420e-9942-3103e5d4e75b",
+                            ConcurrencyStamp = "d5189c7d-afaa-4dcb-91d7-d7a91793a9f5",
+                            Name = "Admin",
+                            NormalizedName = "ADMIN"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

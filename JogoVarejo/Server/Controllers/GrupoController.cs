@@ -60,7 +60,7 @@ namespace JogoVarejo.Server.Controllers
         [HttpGet("operador/{userId}")]
         public async Task<ActionResult<List<ApplicationUser>>> GetOperador(Guid userId)
         {
-           
+
 
             var user = await _context.Users
                 .SingleAsync(x => x.Id == userId.ToString());
