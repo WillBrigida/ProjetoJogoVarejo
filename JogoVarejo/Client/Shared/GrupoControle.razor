@@ -1,0 +1,130 @@
+﻿@page "/grupocontrole"
+@inject HttpClient Http
+
+<AuthorizeView Roles="Admin, Professor">
+    <Authorized Context="Auth">
+        <NavMenuConfiguracao />
+
+        <div class="text-center" id="grupo-controles">
+            <h1 class="display-4">Controle Usuarios</h1>
+            <br />
+        </div>
+
+        <h6 class="text-center" style="color:mediumseagreen;">@MensagemSucesso</h6>
+        <h6 class="text-center" style="color:tomato">@MensagemErro</h6>
+
+        @if (grupos == null)
+        {
+            <p><em>Loading...</em></p>
+        }
+        else
+        {
+            <div id="card-grupo-controles">
+                <table class="table table-striped">
+                    <thead class="cor-site" style="color:#d7d7d7">
+                        <tr>
+                            <th>Nome</th>
+                            <th>Login</th>
+                            <th>Senha</th>
+                            <th></th>
+                            <th></th>
+
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in usuarios)
+                        {
+                        <tr>
+                            <td width="100px">
+                                @item.Nome
+                            </td>
+
+                            <td width="100px">
+                                @item.Login
+                            </td>
+
+                            <td>
+                                <EditForm Model="usuarios">
+                                    <InputText Id="usuarios" class="form-control" @bind-Value="item.Senha" />
+                                </EditForm>
+                            </td>
+
+                            <td width="60">
+                                <button class="btn btn-link" style="color:cornflowerblue;" @onclick="@(()=> OnDelete(item))"><i class="far fa-trash-alt" style="color:tomato"></i></button>
+                            </td>
+
+                            <td width="60">
+                                <button class="btn btn-link" style="color:mediumseagreen;" @onclick="@(()=> OnSalvar(item))"><i class="far fa-save" style="color:mediumseagreen"></i></button>
+                            </td>
+
+                        </tr>
+                        }
+                    </tbody>
+                </table>
+
+            </div>
+        }
+    </Authorized>
+    <NotAuthorized>
+        <JogoVarejo.Client.Pages.Index/>
+    </NotAuthorized>
+
+</AuthorizeView>
+
+@code {
+    private List<Grupos> grupos = new List<Grupos>();
+    private List<ApplicationUser> usuarios = new List<ApplicationUser>();
+    public Grupos Grupo { get; set; } = new Grupos();
+
+    public string MensagemErro { get; set; }
+    public string MensagemSucesso { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await CarregarItens();
+    }
+
+    async Task CarregarItens()
+    {
+        var users = await Http.GetJsonAsync<List<ApplicationUser>>("api/v1/acesso/usuarios/");
+        usuarios = users.OrderBy(x => x.Nome).ToList();
+    }
+
+    async Task OnDelete(ApplicationUser usuario)
+    {
+        await Http.PostJsonAsync("api/v1/acesso/deletar", usuario);
+        //await Http.PostJsonAsync("api/v1/grupo/deletar", usuario.Grupo);
+
+        await CarregarItens();
+    }
+
+    async Task OnSalvar(ApplicationUser usr)
+    {
+        var result = await Http.PutJsonAsync<GenericResult<ApplicationUser>>("api/v1/acesso/usuarios", usr);
+        if (result.Sucesso)
+        {
+            MensagemSucesso = "Dado(s) alterado(s)!";
+        }
+        else
+            MensagemErro = result.Mensagem;
+    }
+}
+
+
+<style>
+
+    #grupo-controles {
+        margin: 40px 0px 0px 0px;
+    }
+
+    #card-grupo-controles {
+        width: 50%;
+        margin: 0 auto 60px;
+        padding: 0px 40px 20px 40px;
+    }
+
+    h3, label {
+        color: #d7d7d7;
+    }
+
+</style>

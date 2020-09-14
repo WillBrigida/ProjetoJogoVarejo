@@ -1,0 +1,279 @@
+﻿@page "/operador"
+@inject NavigationManager Nav
+@inject HttpClient Http
+@inject IAuthorizationService AuthorizationService
+@inject AppState State
+@implements IDisposable
+
+<AuthorizeView Roles="Admin, Aluno">
+    <Authorized Context="Auth">
+
+        <GerenteComponente Grupo="@Grupo"
+                           Display="none"
+                           TextoBotao1="Decidir"
+                           GrupoOperadorGerente="Gerente"
+                           Titulo="Operador"
+                           Disabled="true"
+                           OnAction2="@(()=> OnHistorico())"
+                           OnAction3="@(()=> OnIndicadores())"
+                           OnAction1="OnDecidir">
+            <Icon><i class="fas fa-user-friends" style="font-size:30px" ;></i></Icon>
+            <ChildContent>
+                <h6 class="text-center" style="color:mediumseagreen">@MensagemSucesso</h6>
+                <h6 class="text-center" style="color:tomato">@MensagemErro</h6>
+            </ChildContent>
+        </GerenteComponente>
+
+
+        <Modal @ref="modalHistorico"
+               P_TextoTitulo=""
+               TextoBotao="Incluir Movimentos"
+               OnAction="@OnIncluirMovimento">
+            <Historicos Historico="@Historico" />
+        </Modal>
+
+        <Modal @ref="modalIncluirMovimento"
+               Display="none"
+               P_TextoTitulo=""
+               IdMovimento="IdMovimento"
+               TextoBotao="Salvar"
+               OnAction="@OnSalvar">
+
+            <div class="text-center" id="operador">
+                <h1 class="display-3">Incluir Movimentos</h1>
+                <br />
+            </div>
+
+            <div class="card" id="card-operador">
+                <div class="card-body">
+
+                    <EditForm Model="@Historico" OnValidSubmit="(()=> OnSalvarMovimento(Historico.LastOrDefault()))">
+                        <div class="form-row">
+                            <div class="col-md-6 mb-3">
+                                <label for="grupo">Dia:</label>
+                                <InputNumber Id="nome" class="form-control" @bind-Value="@Historico.LastOrDefault().Dia" disabled />
+                            </div>
+
+
+                            <div class="col-md-6 mb-3">
+                                <label for="grupo">Saldo Final Dia Anterior:</label>
+                                <InputNumber Id="nome" class="form-control" @bind-Value="@Historico.LastOrDefault().SaldoFinalAnterior" disabled />
+                            </div>
+
+                        </div>
+
+                        <div class="form-row">
+                            <div class="col-md-6 mb-3">
+                                <label for="grupo">Recebido:</label>
+                                <InputNumber Id="nome" class="form-control" @bind-Value="@Historico.LastOrDefault().Recebido" disabled />
+                            </div>
+
+
+                            <div class="col-md-6 mb-3">
+                                <label for="grupo">A Receber:</label>
+                                <InputNumber Id="nome" class="form-control" @bind-Value="@Historico.LastOrDefault().Areceber" disabled />
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="col-md-6 mb-3">
+                                <label for="grupo">Saldo Inicial:</label>
+                                <InputNumber Id="nome" class="form-control" @bind-Value="@Historico.LastOrDefault().SaldoInicial" disabled />
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="grupo">Quantidade de Compra:</label>
+                                <InputNumber Id="nome" class="form-control" @bind-Value="@Historico.LastOrDefault().Comprado" />
+                            </div>
+                        </div>
+
+                        <button class="btn btn-primary" type="submit">Salvar</button>
+                    </EditForm>
+                </div>
+            </div>
+        </Modal>
+    </Authorized>
+    <NotAuthorized>
+        <JogoVarejo.Client.Pages.Index />
+    </NotAuthorized>
+</AuthorizeView>
+
+@code
+{
+    public List<VwMovimentos> Historico { get; set; } = new List<VwMovimentos>();
+    public JogoVarejo.Shared.Models.Grupos Grupo { get; set; } = new JogoVarejo.Shared.Models.Grupos();
+
+    public string MensagemErro { get; set; }
+    public string MensagemSucesso { get; set; }
+    public bool IsDisabled { get; set; }
+    public bool IsBusy { get; set; }
+    protected Modal modalHistorico;
+    protected Modal modalIndicadores;
+    protected Modal modalIncluirMovimento;
+    [CascadingParameter]
+    protected Task<AuthenticationState> authenticationStateTask { get; set; }
+    public Controle Controle { get; set; }
+    public int? IdMovimento { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        ClaimsPrincipal user = (await authenticationStateTask).User;
+        var userId = (user.Identity as ClaimsIdentity).FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+        Console.WriteLine(userId);
+
+        Grupo = await Http.GetJsonAsync<JogoVarejo.Shared.Models.Grupos>($"api/v1/grupo/operador/{Guid.Parse(userId)}");
+
+        CarregarControle();
+
+        State.OnChange += StateHasChanged;
+
+    }
+
+    protected async Task OnDecidir()
+    {
+        State.SetFase($"Fase {Controle.Fase.ToString()}");
+
+        MensagemSucesso = "";
+        MensagemSucesso = "";
+
+        if (Controle.Fase != 2)
+        {
+            MensagemErro = "Opção indisponível nessa fase!";
+            return;
+        }
+
+        Console.WriteLine(" => Decidir");
+        var result = await Http.GetJsonAsync<GenericResult<VwMovimentos>>($"api/v1/movimento/{Grupo.GrupoId}");
+        if (!result.Sucesso)
+            MensagemErro = result.Mensagem;
+        else
+            Historico = result.Items;
+
+        await Task.Run(() => modalHistorico.Exibir());
+        //MensagemSucesso = "Os campos foram salvos com sucesso!";
+    }
+
+
+    protected async Task OnHistorico()
+    {
+        MensagemSucesso = "";
+        MensagemSucesso = "";
+        Console.WriteLine(" => OnHistorico");
+        await Task.Run(() => modalIndicadores.Ocultar());
+
+        await Task.Run(() => modalHistorico.Exibir());
+        MensagemSucesso = "";
+    }
+
+
+    protected async Task OnIncluirMovimento()
+    {
+        MensagemSucesso = "";
+        MensagemSucesso = "";
+        if (Historico.Count >= Controle.Duracao)
+        {
+            MensagemSucesso = $"Você já finalizou os {Controle.Duracao} dias!";
+            modalHistorico.Ocultar();
+            return;
+        }
+
+        await Http.PostJsonAsync("api/v1/movimento/procedure", Grupo);
+
+        var result = await Http.GetJsonAsync<GenericResult<VwMovimentos>>($"api/v1/movimento/{Grupo.GrupoId}");
+
+        Historico = result.Items;
+        IdMovimento = result.Items.LastOrDefault().MovimentoId;
+
+
+        await Task.Run(() => modalHistorico.Ocultar());
+
+        await Task.Run(() => modalIncluirMovimento.Exibir());
+        MensagemSucesso = "";
+    }
+
+    protected async Task OnIndicadores()
+    {
+        MensagemSucesso = "";
+        MensagemSucesso = "";
+        await Task.Run(() => modalHistorico.Ocultar());
+
+        await Task.Run(() => modalIndicadores.Exibir());
+    }
+
+    protected async Task BtnAlertAceitar()
+    {
+        MensagemSucesso = "";
+        MensagemSucesso = "";
+
+        await Task.Run(() => modalHistorico.Ocultar());
+        await Task.Run(() => modalIndicadores.Ocultar());
+    }
+
+    protected async Task AbrirIndicadoares()
+    {
+        Nav.NavigateTo("/indicadores");
+    }
+
+    protected async Task OnSalvar()
+    {
+        await Task.Run(() => modalIncluirMovimento.Ocultar());
+        await Task.Run(() => modalHistorico.Exibir());
+    }
+
+    protected async Task OnSalvarMovimento(VwMovimentos movimentos)
+    {
+        MensagemSucesso = "";
+        MensagemSucesso = "";
+
+        var response = await Http.PutJsonAsync<GenericResult<VwMovimentos>>("api/v1/movimento/", movimentos);
+        if (!response.Sucesso)
+        {
+            MensagemErro = response.Mensagem;
+            await Task.Run(() => modalIncluirMovimento.Ocultar());
+            return;
+        }
+
+        var result = await Http.GetJsonAsync<GenericResult<VwMovimentos>>($"api/v1/movimento/{Grupo.GrupoId}");
+
+        Historico = result.Items;
+
+        await Task.Run(() => modalIncluirMovimento.Ocultar());
+        await Task.Run(() => modalHistorico.Exibir());
+
+
+    }
+
+    protected async Task CarregarControle()
+    {
+        var respose = await Http.GetJsonAsync<GenericResult<Controle>>("api/v1/controle/");
+        if (!respose.Sucesso)
+            MensagemErro = respose.Mensagem;
+        else
+        {
+            Controle = respose.Item;
+            State.SetFase($"Fase {Controle.Fase.ToString()}");
+        }
+    }
+
+
+    public void Dispose()
+    {
+        State.OnChange -= StateHasChanged;
+    }
+}
+
+
+<style>
+
+    #operador {
+        margin: 40px 0px 0px 0px;
+    }
+
+
+    #card-operador {
+        width: 60%;
+        margin: 20px auto 60px;
+        padding: 0px 40px;
+    }
+</style>

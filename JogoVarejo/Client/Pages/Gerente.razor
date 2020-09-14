@@ -1,0 +1,223 @@
+﻿@page "/gerente"
+@inject NavigationManager Nav
+@inject HttpClient Http
+@inject IAuthorizationService AuthorizationService
+@inject NavigationManager Nav
+@inject AppState State
+@implements IDisposable
+
+
+
+
+
+<AuthorizeView Roles="Admin, Aluno">
+
+    <Authorized Context="Auth">
+
+        <GerenteComponente Grupo="@Grupo"
+                           GrupoOperadorGerente="Grupo Operador"
+                           TextoBotao1="@textoBotao1"
+                           Disabled="@disabled"
+                           Display="@display"
+                           OnAction2="@(()=> OnHistorico())"
+                           OnAction3="@(()=> OnIndicadores())"
+                           OnAction1="OnEditarSalvar">
+            <Icon>
+                <i class="fas fa-user-tie" style="font-size:30px" ;></i>
+            </Icon>
+            <ChildContent>
+                <h6 class="text-center" style="color:mediumseagreen">@MensagemSucesso</h6>
+                <h6 class="text-center" style="color:tomato">@MensagemErro</h6>
+            </ChildContent>
+        </GerenteComponente>
+
+
+        @if (IsBusy == true)
+        {
+            <div style="width:100%; text-align:center; margin:20px 0">
+                <div class="spinner-border" style="width: 2rem; height: 2rem; color:#4a8fa0;" role="status">
+                    <span class="sr-only">Loading...</span>
+                </div>
+                <p>carregando. . .</p>
+            </div>
+        }
+
+        <Modal @ref="modalHistorico"
+               P_TextoTitulo=""
+               TextoBotao="Indicadores"
+               OnAction="@OnIndicadores">
+            <Historicos Historico="@Historico" />
+        </Modal>
+
+        <Modal @ref="modalIndicadores"
+               P_TextoTitulo=""
+               TextoBotao="Historico"
+               OnAction="@OnHistorico">
+            <IndicadoresComponent IdGrupo="@Grupo.GrupoId" />
+        </Modal>
+
+    </Authorized>
+
+    <NotAuthorized Context="Auth">
+        <JogoVarejo.Client.Pages.Index />
+    </NotAuthorized>
+</AuthorizeView>
+
+@code   {
+
+    public List<VwMovimentos> Historico { get; set; } = new List<VwMovimentos>();
+
+    public JogoVarejo.Shared.Models.Grupos Grupo { get; set; } = new JogoVarejo.Shared.Models.Grupos();
+    public string MensagemErro { get; set; }
+    public string MensagemSucesso { get; set; }
+    public bool IsDisabled { get; set; }
+    public bool IsBusy { get; set; }
+    protected Modal modalHistorico;
+    protected Modal modalIndicadores;
+    protected FaseComponent fase;
+    public Controle Controle { get; set; }
+
+    private string textoBotao1 = "Editar";
+    private bool disabled = true;
+    private string display = "";
+
+    [CascadingParameter]
+    protected Task<AuthenticationState> authenticationStateTask { get; set; }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        await CarregarGrupo();
+        await CarregarHistorico();
+        await CarregarControle();
+        State.OnChange += StateHasChanged;
+
+    }
+
+    protected async Task OnEditarSalvar()
+    {
+        await CarregarControle();
+
+        Console.WriteLine(" => OnEditarSalvar");
+
+        MensagemSucesso = "";
+        MensagemErro = "";
+
+        if (Controle.Fase < 1)
+        {
+            MensagemErro = "O Jogo ainda não começou! Aguarde a indicação do professor.";
+            return;
+        }
+
+        if (Controle.Fase > 1)
+        {
+
+            await CarregarGrupo();
+
+            MensagemErro = "Você não pode mais editar esses campos!";
+            textoBotao1 = "Editar";
+            disabled = true;
+            display = "";
+
+            return;
+        }
+
+        if (Controle.Fase == 1 && textoBotao1.Contains("Editar"))
+        {
+            textoBotao1 = "Salvar";
+            disabled = false;
+            display = "none";
+            return;
+        }
+
+        if (Controle.Fase == 1 && textoBotao1.Contains("Salvar"))
+        {
+            textoBotao1 = "Editar";
+            disabled = true;
+            display = "";
+
+            await OnSalvar();
+            return;
+        }
+
+        Console.WriteLine(" => Salvar");
+
+        MensagemSucesso = "Os campos foram salvos com sucesso!";
+    }
+
+    protected async Task OnHistorico()
+    {
+        Console.WriteLine(" => OnHistorico");
+        await Task.Run(() => modalIndicadores.Ocultar());
+        await Task.Run(() => modalHistorico.Exibir());
+        MensagemSucesso = "";
+    }
+
+    protected async Task OnIndicadores()
+    {
+        await Task.Run(() => modalHistorico.Ocultar());
+        await Task.Run(() => modalIndicadores.Exibir());
+        MensagemSucesso = "";
+    }
+
+    protected async Task BtnAlertAceitar()
+    {
+        await Task.Run(() => modalHistorico.Ocultar());
+        await Task.Run(() => modalIndicadores.Ocultar());
+    }
+
+    protected async Task AbrirIndicadoares()
+    {
+        Nav.NavigateTo("/indicadores");
+    }
+
+    protected async Task OnSalvar()
+    {
+        var result = await Http.PutJsonAsync<GenericResult<JogoVarejo.Shared.Models.Grupos>>($"api/v1/grupo", Grupo);
+        if (result.Sucesso)
+
+            MensagemSucesso = "Salvo com sucesso!";
+    }
+    protected async Task CarregarGrupo()
+    {
+        ClaimsPrincipal user = (await authenticationStateTask).User;
+        var userId = (user.Identity as ClaimsIdentity).FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+
+        var userResult = await Http.GetJsonAsync<GenericResult<ApplicationUser>>($"api/v1/acesso/{Guid.Parse(userId)}");
+        if (!userResult.Sucesso)
+            MensagemErro = userResult.Mensagem;
+        else
+        {
+            var grupoResult = await Http.GetJsonAsync<GenericResult<JogoVarejo.Shared.Models.Grupos>>($"api/v1/grupo/{userResult.Item.GrupoUsuarioId}");
+            if (!grupoResult.Sucesso)
+                MensagemErro = grupoResult.Mensagem;
+            Grupo = grupoResult.Item;
+        }
+
+    }
+
+    protected async Task CarregarControle()
+    {
+        var respose = await Http.GetJsonAsync<GenericResult<Controle>>("api/v1/controle/");
+        if (!respose.Sucesso)
+            MensagemErro = respose.Mensagem;
+        else
+        {
+            Controle = respose.Item;
+            State.SetFase($"Fase {Controle.Fase.ToString()}");
+        }
+    }
+
+    protected async Task CarregarHistorico()
+    {
+        var result = await Http.GetJsonAsync<GenericResult<VwMovimentos>>($"api/v1/movimento/{Grupo.GrupoId}");
+        Historico = result.Items;
+    }
+
+    public void Dispose()
+    {
+        State.OnChange -= StateHasChanged;
+    }
+}

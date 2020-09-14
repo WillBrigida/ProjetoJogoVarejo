@@ -1,0 +1,189 @@
+﻿@page "/controle"
+@inject NavigationManager Nav
+@inject HttpClient Http
+@inject AppState AppState
+@implements IDisposable
+
+
+<AuthorizeView Roles="Admin, Professor">
+    <Authorized Context="Auth">
+        <NavMenuConfiguracao />
+
+        <div class="text-center" id="controles">
+            <h1 class="display-4">Controle</h1>
+            <br />
+        </div>
+
+        <h6 class="text-center" style="color:mediumseagreen;">@MensagemSucesso</h6>
+        <h6 class="text-center" style="color:tomato">@MensagemErro</h6>
+
+
+        <div class="card cor-site" id="card-controles">
+            <div class="card-body">
+                <h3 class="text-center">Fase/Duração</h3>
+                <EditForm Model="@controle" OnValidSubmit="OnSalvar">
+
+                    <div class="form-group">
+                        <label for="grupo">Fase: *</label>
+
+                        <select @bind="controle.Fase" class="form-control">
+                            @foreach (var item in Fases)
+                            {
+                                <option value="@item">
+                                    @item
+                                </option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="grupo">Duração: *</label>
+                        <select @bind="@controle.Duracao" class="form-control">
+                            @foreach (var item in Dias)
+                            {
+                                <option value="@item">
+                                    @item
+                                </option>
+                            }
+                        </select>
+                    </div>
+                    <br />
+                    <span aria-hidden="true">
+                        <button type="submit" class="btn btn-primary">Salvar</button>
+                        <button type="button" class="btn btn-primary" @onclick="@OnEncerrarJogo">Encerrar jogo</button>
+                    </span>
+                </EditForm>
+            </div>
+        </div>
+    </Authorized>
+    <NotAuthorized>
+        <JogoVarejo.Client.Pages.Index />
+    </NotAuthorized>
+</AuthorizeView>
+
+
+
+@code{
+    public string[] Fases { get; set; } = new string[] { "-Selecione-", "1", "2", "3" };
+    public string[] Dias { get; set; } = new string[] { "-Selecione-", "10", "20", "30", "40" };
+
+    public string MensagemErro { get; set; }
+    public string MensagemSucesso { get; set; }
+    public bool IsBusy { get; set; }
+
+
+    public Controle controle = new Controle();
+
+    protected async Task OnSalvar()
+    {
+        MensagemSucesso = "";
+        MensagemErro = "";
+
+        if (controle.ControleId != 0)
+        {
+            var result = await Http.PutJsonAsync<GenericResult<Controle>>("api/v1/controle/", controle);
+            if (result.Sucesso)
+            {
+                AppState.SetFase($"Fase {controle.Fase.ToString()}");
+                MensagemSucesso = "Dado(s) alterado(s)!";
+            }
+            else
+                MensagemErro = "Não foi possível atender sua requisição!. Tente novamente.";
+        }
+        else
+        {
+            var result = await Http.PostJsonAsync<GenericResult<Controle>>("api/v1/controle/", controle);
+            if (result.Sucesso)
+            {
+                MensagemSucesso = "Dado(s) salvo(s)!";
+                AppState.SetFase($"Fase {controle.Fase.ToString()}");
+                controle.ControleId = result.Item.ControleId;
+            }
+            else
+                MensagemErro = "Não foi possível atender sua requisição!. Tente novamente.";
+        }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await OnCarregarControles();
+
+        AppState.OnChange += StateHasChanged;
+    }
+
+    protected async Task OnCarregarControles()
+    {
+        MensagemSucesso = "";
+        MensagemErro = "";
+
+        var response = await Http.GetJsonAsync<GenericResult<Controle>>("api/v1/controle/");
+        if (response.Sucesso)
+        {
+            controle = response.Item;
+        }
+        else
+        {
+            MensagemErro = response.Mensagem;
+            controle = new Controle
+            {
+                Duracao = 0,
+                Fase = 0
+            };
+        }
+
+    }
+
+    protected async Task OnEncerrarJogo()
+    {
+        MensagemSucesso = "";
+        MensagemErro = "";
+
+        if (controle.ControleId == 0 || controle.Fase < 1)
+        {
+            MensagemErro = "O jogo ainda não foi iniciado!";
+            return;
+        }
+
+        var ctl = new Controle
+        {
+            ControleId = controle.ControleId,
+            Duracao = 0,
+            Fase = 0,
+        };
+
+        var result = await Http.PutJsonAsync<GenericResult<Controle>>("api/v1/controle/", ctl);
+        if (result.Sucesso)
+        {
+            AppState.SetFase("Aguarde. . .");
+            controle.Duracao = 0;
+            controle.Fase = 0;
+
+            MensagemSucesso = "Jogo encerrado com sucesso!";
+        }
+        else
+            MensagemErro = "Não foi possível atender sua requisição!. Tente novamente.";
+    }
+
+    public void Dispose()
+    {
+        AppState.OnChange -= StateHasChanged;
+    }
+}
+
+<style>
+
+
+    #controles {
+        margin: 40px 0px 0px 0px;
+    }
+
+    #card-controles {
+        width: 50%;
+        margin: 0 auto;
+        padding: 0px 40px 20px;
+    }
+
+    h3, label {
+        color: #d7d7d7;
+    }
+</style>

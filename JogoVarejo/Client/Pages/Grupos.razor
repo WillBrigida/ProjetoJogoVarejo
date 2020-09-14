@@ -1,0 +1,249 @@
+﻿@page "/grupo"
+@inject NavigationManager Nav
+@inject HttpClient Http
+
+<AuthorizeView Roles="Admin, Professor">
+    <Authorized Context="Auth">
+
+
+        <div class="text-center">
+            <h1 class="display-4">Grupos</h1>
+            <br />
+        </div>
+
+
+        @if (grupos == null)
+        {
+            <p><em>Loading...</em></p>
+        }
+        else
+        {
+    <div style="text-align:center; margin: 0px 60px;">
+
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Quando</th>
+                    <th>Quanto</th>
+                    <th>Grupo Operador</th>
+                    <th></th>
+
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in grupos)
+                {
+                 
+
+                    <tr>
+                        <td width="200">Grupo @item.GrupoId</td>
+
+                        <td width="250">
+                            <EditForm Model="grupos">
+                                <InputText Id="grupos" class="form-control" @bind-Value="item.Quando" disabled />
+                            </EditForm>
+                        </td>
+
+                        <td width="250">
+                            <EditForm Model="grupos">
+                                <InputText Id="grupos" class="form-control" @bind-Value="item.Quanto" disabled />
+                            </EditForm>
+                        </td>
+
+                        <td width="250">
+                            <EditForm Model="grupos">
+                                <InputNumber Id="grupos" class="form-control" @bind-Value="item.GrupoOperador">Teste</InputNumber>
+                            </EditForm>
+                        </td>
+
+                        <td class="text-left" width="100">
+                            <button class="btn btn-link" @onclick="() => OnSalvar(item)">Salvar</button>
+                        </td>
+
+                        <td width="250" class="text-center">
+                            <button class="btn btn-link" style="color:cornflowerblue;" @onclick="@(async()=> { Grupo = item; await OnDetalheGrupo(item); })"><i class="far fa-edit"></i> </button>
+                            <button class="btn btn btn-link" style="color:mediumseagreen;" @onclick="@(()=> OnHistorico(item))"><i class="fas fa-history"></i></button>
+                            <button class="btn btn btn-link" style="color:darkorange;" @onclick="@(()=> OnIndicadores(item))"><i class="fas fa-align-center"></i></button>
+                        </td>
+
+                    </tr>
+
+
+                }
+            </tbody>
+        </table>
+
+        <Modal @ref="modalHistorico"
+               P_TextoTitulo=""
+               OnAction=@(() => OnIndicadores(Grupo))
+               TextoBotao="Indicadores">
+            <Historicos Historico="@Historico"/>
+        </Modal>
+       
+
+        <Modal @ref="modalGerente"
+               P_TextoTitulo=""
+               Display="none"
+               OnAction="@(()=>OnIndicadores(Grupo))">
+
+            <GerenteComponente Grupo="@Grupo"
+                               GrupoOperadorGerente="Grupo Operador"
+                               TextoBotao1="@textoBotao1"
+                               Disabled="@disabled"
+                               Display="@display"
+                               OnAction2="@(()=> OnHistorico(Grupo))"
+                               OnAction3="@(()=> OnIndicadores(Grupo))"
+                               OnAction1="OnEditarSalvar">
+                <Icon>
+                    <i class="fas fa-user-tie" style="font-size:30px" ;></i>
+                </Icon>
+                <ChildContent>
+                    <h6 class="text-center" style="color:mediumseagreen">@MensagemSucesso</h6>
+                    <h6 class="text-center" style="color:tomato">@MensagemErro</h6>
+                </ChildContent>
+            </GerenteComponente>
+        </Modal>
+
+        <Modal @ref="modalIndicadores"
+               P_TextoTitulo=""
+               TextoBotao="Histórico"
+               OnAction="@(()=>OnHistorico(Grupo))">
+            <IndicadoresComponent IdGrupo="@Grupo.GrupoId" />
+        </Modal>
+
+    </div>
+        }
+    </Authorized>
+
+    <NotAuthorized>
+        <JogoVarejo.Client.Pages.Index />
+    </NotAuthorized>
+</AuthorizeView>
+
+
+
+@code {
+    public List<VwMovimentos> Historico { get; set; } = new List<VwMovimentos>();
+
+    private List<JogoVarejo.Shared.Models.Grupos> grupos = new List<JogoVarejo.Shared.Models.Grupos>();
+    public JogoVarejo.Shared.Models.Grupos Grupo { get; set; } = new JogoVarejo.Shared.Models.Grupos();
+    protected Modal modalHistorico;
+    protected Modal modalGerente;
+    protected Modal modalIndicadores;
+
+    public string MensagemErro { get; set; }
+    public string MensagemSucesso { get; set; }
+    public bool IsDisabled { get; set; }
+    public bool IsBusy { get; set; }
+
+    private string textoBotao1 = "Editar";
+    private bool disabled = true;
+    private string display = "";
+    [Parameter] public string DisplayNav { get; set; } = "";
+
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        MensagemSucesso = "";
+
+        var response = await Http.GetJsonAsync<GenericResult<JogoVarejo.Shared.Models.Grupos>>("api/v1/grupo");
+        if (!response.Sucesso)
+            MensagemErro = response.Mensagem;
+
+        grupos = response.Items;
+
+
+    }
+
+
+    protected void OnEditarSalvar()
+    {
+        MensagemSucesso = "";
+        MensagemErro = "";
+
+        if (textoBotao1.Contains("Editar"))
+        {
+            textoBotao1 = "Salvar";
+            disabled = false;
+            display = "none";
+            StateHasChanged();
+            return;
+        }
+
+        if (textoBotao1.Contains("Salvar"))
+        {
+            OnSalvar();
+            textoBotao1 = "Editar";
+            disabled = true;
+            display = "";
+            StateHasChanged();
+            return;
+        }
+
+        Console.WriteLine(" => Salvar");
+
+        MensagemSucesso = "Os campos foram salvos com sucesso!";
+    }
+
+    protected async Task BtnAlertAceitar()
+    {
+        await Task.Run(() => modalHistorico.Ocultar());
+        await Task.Run(() => modalGerente.Ocultar());
+        await Task.Run(() => modalIndicadores.Ocultar());
+    }
+
+    protected async Task OnDetalheGrupo(JogoVarejo.Shared.Models.Grupos grupo)
+    {
+        Console.WriteLine($"Id escolhido: {Grupo.GrupoId}");
+        MensagemSucesso = "";
+        MensagemErro = "";
+        
+        await Task.Run(() => modalGerente.Exibir());
+    }
+
+    protected async Task OnHistorico(JogoVarejo.Shared.Models.Grupos grupo)
+    {
+        var result = await Http.GetJsonAsync<GenericResult<VwMovimentos>>($"api/v1/movimento/{Grupo.GrupoId}");
+        Historico = result.Items;
+
+        await Task.Run(() => modalGerente.Ocultar());
+        await Task.Run(() => modalIndicadores.Ocultar());
+        await Task.Run(() => modalHistorico.Exibir());
+        MensagemSucesso = "";
+    }
+
+
+    protected async Task OnIndicadores(JogoVarejo.Shared.Models.Grupos grupo)
+    {
+        MensagemSucesso = "";
+
+        await Task.Run(() => modalHistorico.Ocultar());
+        await Task.Run(() => modalGerente.Ocultar());
+
+        await Task.Run(() => modalIndicadores.Exibir());
+    }
+
+    protected async Task OnSalvar()
+    {
+        MensagemSucesso = "Salvo com sucesso!";
+
+        var result = await Http.PutJsonAsync<GenericResult<JogoVarejo.Shared.Models.Grupos>>($"api/v1/grupo", Grupo);
+        if (!result.Sucesso)
+            MensagemErro = result.Mensagem;
+    }
+
+    protected async Task OnSalvar(JogoVarejo.Shared.Models.Grupos grupo = null)
+    {
+        Grupo = grupo;
+
+        MensagemSucesso = "Salvo com sucesso!";
+
+        var result = await Http.PutJsonAsync<GenericResult<JogoVarejo.Shared.Models.Grupos>>($"api/v1/grupo", grupo);
+        if (!result.Sucesso)
+            MensagemErro = result.Mensagem;
+        MensagemSucesso = "Salvo com sucesso!";
+    }
+}
+

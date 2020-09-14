@@ -1,0 +1,78 @@
+﻿@*@typeparam T*@
+@inject HttpClient Http;
+
+
+@if (mostrarModal)
+{
+<div class="modal-backdrop show"></div>
+
+                <div class="modal text-left " tabindex="-1" role="dialog" style="display: block;" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered modal-xl modal-dialog-scrollable " role="document">
+                        <div class="modal-content">
+                            <div class="modal-header" style="display:@Display">
+                                <h5 class="modal-title">@P_TextoTitulo</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="font-size:30px; color:#4a8fa0" @onclick="@(()=> Ocultar())">
+                                    <span aria-hidden="true"><i class="fas fa-times"></i></span>
+                                </button>
+                            </div>
+
+                            <div class="modal-body">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="font-size:30px; text-align:right; display:@visibility; color:#4a8fa0" @onclick="@Sair">
+                                    <span aria-hidden="true"><i class="fas fa-times"></i></span>
+                                </button>
+                                @ChildContent
+                            </div>
+
+                            <div class="modal-footer" style="display:@Display">
+                                <button type="button" class="btn btn-primary" @onclick="@OnAction">@TextoBotao</button>
+                                @*<button type="button" class="btn btn-outline-primary" @onclick="@(()=> mostrarModal = false)">@TextoBotao</button>*@
+                            </div>
+                        </div>
+                    </div>
+                </div>}
+@code
+{ bool mostrarModal = false;
+
+    [Parameter] public string P_TextoTitulo { get; set; } = "Alerta!";
+    [Parameter] public RenderFragment ChildContent { get; set; }
+    [Parameter] public EventCallback OnAction { get; set; }
+    [Parameter] public EventCallback OnAction2 { get; set; }
+    [Parameter] public string Display { get; set; } = "";
+    [Parameter] public string TextoBotao { get; set; } = "Indicadores";
+    [Parameter] public int? IdMovimento { get; set; }
+
+    string visibility { get; set; }
+
+    public void Exibir() => mostrarModal = true;
+    public void Ocultar() => mostrarModal = false;
+
+    protected string InverterVisibility()
+    {
+        var a = !string.IsNullOrEmpty(Display) ? null : "none";
+        return a;
+    }
+
+    public void Sair()
+    {
+        Console.WriteLine("=> Sair");
+        Console.WriteLine(IdMovimento.ToString());
+        if (IdMovimento != null)
+            Http.DeleteAsync($"api/v1/movimento/{IdMovimento}");
+        Ocultar();
+    }
+
+    //protected override async Task OnInitializedAsync()
+    //{
+    //    InverterVisibility();
+    //}
+
+    //protected override void OnAfterRender(bool firstRender)
+    //{
+    //    var a = !string.IsNullOrEmpty(Display) ? null : "none";
+    //    visibility = a;
+    //}
+
+    protected override async Task OnInitializedAsync()
+    {
+        visibility = !string.IsNullOrEmpty(Display) ? null : "none";
+    } }

@@ -1,0 +1,132 @@
+﻿@page "/indicadores"
+@inject HttpClient Http
+
+    <AuthorizeView Roles="Admin, Aluno, Professor">
+        <Authorized Context="Auth">
+
+            <div class="text-center" id="indicadore">
+                <h1 class="display-4">Indicadores</h1>
+                <br />
+                <br />
+            </div>
+
+            <div class="row" id="card-indicadore">
+                <div class="col-sm-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Dados da Simulação:</h5>
+                            <p>Duração: <span style="color:darkolivegreen;font-weight:bold">@Indicadores.Duracao</span></p>
+                            <p>Demanda Total: <span style="color:darkolivegreen;font-weight:bold">@Indicadores.DemandaTotal</span></p>
+                            <p>Demanda Média ($): <span style="color:darkolivegreen;font-weight:bold">@Indicadores.DemandaMedia</span></p>
+                            <p>Tempo de Reposição Médio ($):<span style="color:darkolivegreen;font-weight:bold">@Indicadores.Trmedio</span></p>
+                            <br />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Atendimento aos Clientes:</h5>
+                            <p>Clientes Atendidos: <span style="color:darkolivegreen;font-weight:bold">@Indicadores.ClientesAtendidos</span></p>
+                            <p>Ganho Realizado ($): <span style="color:darkolivegreen;font-weight:bold">@Indicadores.Ganho</span></p>
+                            <p>Clientes Perdidos: <span style="color:darkolivegreen;font-weight:bold">@Indicadores.ClientesPerdidos</span></p>
+                            <p>Ganho Perdido ($): <span style="color:darkolivegreen;font-weight:bold">@Indicadores.GanhoPerdido</span></p>
+                            <p>Nível de Serviço ao Cliente (%): <span style="color:darkolivegreen;font-weight:bold">@Indicadores.NivelServicoCliente</span></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row" id="card-indicadore">
+                <div class="col-sm-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Estoque Médio:</h5>
+                            <p>Estoque Médio: <span style="color:darkolivegreen;font-weight:bold">@Indicadores.EstoqueMedio</span></p>
+                            <p>Cobertura Estoque Médio ($): <span style="color:darkolivegreen;font-weight:bold">@Indicadores.CoberturaEstoqueMedio</span></p>
+                            <p>Capital Estoque Médio ($): <span style="color:darkolivegreen;font-weight:bold">@Indicadores.CapitalEstoqueMedio</span></p>
+                            <p>Custo Estocar ($): <span style="color:darkolivegreen;font-weight:bold">@Indicadores.CustoEstocar</span></p>
+                            <p>Giro (vezes/ano): <span style="color:darkolivegreen;font-weight:bold">@Indicadores.Giro</span></p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Estoque Máximo:</h5>
+                            <p>Estoque Máximo (dias): <span style="color:darkolivegreen;font-weight:bold">@Indicadores.EstoqueMaximo</span></p>
+                            <p>Cobertura Estoque Médio ($): <span style="color:darkolivegreen;font-weight:bold">@Indicadores.CoberturaEstoqueMaximo</span></p>
+                            <p>Capital Estoque Médio ($): <span style="color:darkolivegreen;font-weight:bold">@Indicadores.CapitalEstoqueMaximo</span></p><p/><p/><p />
+                           
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row" id="card-indicadore">
+                <div class="col-sm-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Suprimentos:</h5>
+                            <p>Número de Encomendas  ($): <span style="color:darkolivegreen;font-weight:bold">@Indicadores.NumeroEncomendas</span></p>
+                            <p>Custo de Frete ($): <span style="color:darkolivegreen;font-weight:bold">@Indicadores.CustoFrete</span></p>
+                            <p>Quebras de Estoque: <span style="color:darkolivegreen;font-weight:bold">@Indicadores.QuebrasDeEstoque</span></p>
+                            <p>Nível de Serviço do Suprimento: <span style="color:darkolivegreen;font-weight:bold">@Indicadores.NivelServiçoSuprimentos</span></p>
+                            <br />
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Apuração do Resultado:</h5>
+                            <p>Ganho Potencial ($): <span style="color:darkolivegreen;font-weight:bold">@Indicadores.GanhoPotencial</span></p>
+                            <p>Custo Gerenciado ($): <span style="color:darkolivegreen;font-weight:bold">@Indicadores.CustoGerenciado</span></p>
+                            <p>Custo Fixo ($): <span style="color:darkolivegreen;font-weight:bold">@Indicadores.CustoFixo</span></p>
+                            <p>Lucro ($): <span style="color:darkolivegreen;font-weight:bold">@Indicadores.Lucro</span></p>
+                            <p>Lucratividade ($): <span style="color:darkolivegreen;font-weight:bold">@Indicadores.Lucratividade</span></p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </Authorized>
+        <NotAuthorized>
+            <JogoVarejo.Client.Pages.Index />
+        </NotAuthorized>
+    </AuthorizeView>
+
+
+    @code {
+
+        [Parameter] public int IdGrupo { get; set; }
+
+        public JogoVarejo.Shared.Models.VwIndicadores Indicadores { get; set; } = new JogoVarejo.Shared.Models.VwIndicadores();
+
+        protected override async Task OnInitializedAsync()
+        {
+            var result = await Http.GetJsonAsync<GenericResult<JogoVarejo.Shared.Models.VwIndicadores>>($"api/v1/movimento/indicadores/{IdGrupo}");
+            if (result.Item != null && result.Sucesso)
+                Indicadores = result.Item;
+        }
+    }
+
+    <style>
+        #login {
+            margin: 0px 0px 40px 0px;
+        }
+
+        #card-indicadore {
+            width: 80%;
+            margin: 0 auto;
+            padding: 0px 40px 20px;
+        }
+
+        #card_tamanho-h{
+            height:280px;
+        }
+    </style>
